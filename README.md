@@ -3,6 +3,10 @@
 Сделайте тестирование Вашего проекта лучше с системой тестирования Testopia!  
 [![Lint](https://github.com/everysoftware/testopia/actions/workflows/ci.yml/badge.svg)](https://github.com/everysoftware/testopia/actions/workflows/ci.yml)
 
+<img src="https://github.com/everysoftware/testopia/assets/22497421/bcdbbfa8-9200-4cf0-b548-76ff91d70ab2" width="275" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/750f5877-e9b6-4bf2-95fc-a1937e2556aa" width="275" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/ce682978-c804-4c28-a3ea-7461b8afb9b1" width="275" />  
+
 ## Начало работы
 1. Запустите бота
 2. Добавяйте свои устройства и программные продукты для тестирования
@@ -18,6 +22,7 @@ Python3 • Aiogram3 • PostgreSQL • SQLAlchemy 2 • Alembic • Redis • a
 1. Создайте файл окружения ```.env```.
 ```
 BOT_MODE="docker"
+
 
 BOT_DEBUG=0
 BOT_LOGGING_LEVEL="INFO"
