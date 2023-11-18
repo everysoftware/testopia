@@ -15,7 +15,8 @@
 
 ## Стек технологий
 
-Python3 • Aiogram3 • PostgreSQL • SQLAlchemy 2 • Alembic • Redis • arq • Aiottp • Docker • Ruff • Pandas • Matplotlib
+Python3 • Aiogram3 • PostgreSQL • SQLAlchemy 2 • Alembic • Redis • arq • Aiottp • Docker • Ruff • Pandas • Matplotlib  
+[Макеты Figma](https://www.figma.com/file/iJ7SMg6DCuCaDhNlieh3kd/Untitled?type=design&node-id=0-1&mode=design)
 
 ## Сборка
 
