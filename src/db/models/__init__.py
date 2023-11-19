@@ -1,4 +1,5 @@
 from .base import Base
+from .checklist import Checklist
 from .comment import Comment
 from .device import Device
 from .product import Product
@@ -13,5 +14,6 @@ __all__ = (
     'Device',
     'Report',
     'Task',
-    'Product'
+    'Product',
+    'Checklist'
 )

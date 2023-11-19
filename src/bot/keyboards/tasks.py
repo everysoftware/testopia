@@ -1,9 +1,8 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from src.db.enums import TaskState
 from src.db.models import Task
-from src.db.models.task import TaskState
-from src.db.models.task_list import TaskList
 
 TASK_STATES_COLORS = {
     TaskState.SKIPPED: '🔵',
@@ -41,13 +40,12 @@ EDIT_TASK_STATUS_KB = InlineKeyboardMarkup(
 
 
 async def get_tasks_kb(
-        task_list: TaskList,
+        tasks: list[Task],
         is_session_running: bool = False
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
-    for task in task_list.tasks:
-        task: Task
+    for task in tasks:
         builder.row(
             InlineKeyboardButton(
                 text=f'{task.name} {TASK_STATES_COLORS[task.state]}',
@@ -75,5 +73,9 @@ async def get_tasks_kb(
         builder.row(
             InlineKeyboardButton(text='Создать задачу ⏬', callback_data='add')
         )
+        if tasks:
+            builder.row(
+                InlineKeyboardButton(text='Начать сессию ▶️', callback_data=f'run_{tasks[0].checklist.id}')
+            )
 
     return builder.as_markup(resize_keyboard=True)

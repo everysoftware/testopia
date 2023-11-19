@@ -1,22 +1,19 @@
-from aiogram.types import User, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.db import Database
+from db.models import Product
 
 
 async def get_products_kb(
-        from_user: User,
-        db: Database
+        products: list[Product]
 ) -> InlineKeyboardMarkup:
-    async with db.session.begin():
-        builder = InlineKeyboardBuilder()
-        user = await db.user.get(from_user.id)
+    builder = InlineKeyboardBuilder()
 
-        for product in user.products:
-            builder.add(InlineKeyboardButton(
-                text=product.name,
-                callback_data=f'show_{product.id}'
-            ))
+    for product in products:
+        builder.add(InlineKeyboardButton(
+            text=product.name,
+            callback_data=f'show_{product.id}'
+        ))
 
     builder.adjust(1)
 

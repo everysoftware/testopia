@@ -7,7 +7,7 @@ from src.db.repositories import (
     ReportRepo,
     DeviceRepo,
     ProductRepo,
-    TaskListRepo
+    ChecklistRepo
 )
 
 
@@ -18,13 +18,14 @@ class Database:
     report: ReportRepo
     device: DeviceRepo
     product: ProductRepo
+    checklist: ChecklistRepo
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
         self.comment = CommentRepo(session=session)
         self.user = UserRepo(session=session)
-        self.task_list = TaskListRepo(session=session)
+        self.checklist = ChecklistRepo(session=session)
         self.task = TaskRepo(session=session)
         self.report = ReportRepo(session=session)
         self.device = DeviceRepo(session=session)

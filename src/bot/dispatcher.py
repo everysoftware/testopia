@@ -5,7 +5,6 @@ from redis.asyncio.client import Redis
 from sqlalchemy.orm import sessionmaker
 
 from src.bot.handlers import routers
-from src.bot.utils.forwarding import confirmation_center
 from src.cache import Cache
 from src.config import cfg
 
@@ -29,7 +28,6 @@ def create_dispatcher(
         cache=cache,
         pool=session_maker,
         secret_token=secret_token,
-        redirects=confirmation_center
     )
 
     dp.include_routers(*routers)

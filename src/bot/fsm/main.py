@@ -7,4 +7,4 @@ class MainGroup(StatesGroup):
     viewing_devices = State()
     viewing_stats = State()
     viewing_tasks = State()
-    viewing_task_lists = State()
+    viewing_checklists = State()

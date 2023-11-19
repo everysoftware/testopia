@@ -6,8 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 
-class TaskList(Base):
-    __tablename__ = 'task_lists'
+class Checklist(Base):
+    __tablename__ = 'checklists'
 
     id: Mapped[int] = mapped_column(Identity(), primary_key=True, unique=True)
     name: Mapped[str]
@@ -21,12 +21,12 @@ class TaskList(Base):
 
     product = relationship(
         'Product',
-        back_populates='task_lists',
+        back_populates='checklists',
         lazy='selectin'
     )
     tasks = relationship(
         'Task',
-        back_populates='task_list',
+        back_populates='checklist',
         lazy='joined',
         order_by='desc(Task.created_at)'
     )

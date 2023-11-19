@@ -9,7 +9,7 @@ from src.bot.encryption import Verifying
 from src.bot.keyboards.tasks import TASK_STATES_TRANSLATIONS
 from src.db import Database
 
-router = Router(name='stats_show')
+router = Router()
 
 
 async def pie_plot(db: Database, user_id: int) -> str:
@@ -19,19 +19,26 @@ async def pie_plot(db: Database, user_id: int) -> str:
         ))
         df = pd.DataFrame(result.scalars().all())
 
-    # имена классов
-    class_names = df.value_counts().index.tolist()
-
-    # количество в классе
+    lst = df.value_counts().index.tolist()
+    class_names = [TASK_STATES_TRANSLATIONS[x[0]] for x in lst]
     class_values = df.value_counts().values
+
+    colors = {
+        'PASSED': 'lightseagreen',
+        'IMPOSSIBLE': 'gold',
+        'FAILED': 'lightcoral',
+        'SKIPPED': 'turquoise'
+    }
+
+    colors = [colors[x[0]] for x in lst]
 
     my_circle = plt.Circle((0, 0), 0.8, color='white')
 
     # Create a pie chart of the filtered data
     plt.pie(class_values,
-            labels=[TASK_STATES_TRANSLATIONS[x[0]] for x in class_names],
-            autopct="%.1f%%",
-            colors=['lightseagreen', 'gold', 'lightcoral', 'turquoise']
+            labels=class_names,
+            autopct="%.0f%%",
+            colors=colors
             )
 
     p = plt.gcf()

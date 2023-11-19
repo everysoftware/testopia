@@ -1,19 +1,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .repo import Repository
-from ..models.task_list import TaskList
+from ..models.checklist import Checklist
 
 
-class TaskListRepo(Repository[TaskList]):
+class ChecklistRepo(Repository[Checklist]):
     def __init__(self, session: AsyncSession):
-        super().__init__(type_model=TaskList, session=session)
+        super().__init__(type_model=Checklist, session=session)
 
     def new(
             self,
             name: str,
             product_id: int
-    ) -> TaskList:
-        obj = TaskList(
+    ) -> Checklist:
+        obj = Checklist(
             product_id=product_id,
             name=name
         )

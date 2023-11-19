@@ -1,27 +1,23 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.db.models import Product
+from src.db.models import Checklist
 
 
-async def get_task_lists_kb(
-        product: Product
+async def get_checklist_kb(
+        checklists: list[Checklist]
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
-    for task_list in product.task_lists:
+    for checklist in checklists:
         builder.row(
             InlineKeyboardButton(
-                text=task_list.name,
-                callback_data=f'show_{task_list.id}'
-            ),
-            InlineKeyboardButton(
-                text='▶️',
-                callback_data=f'run_{task_list.id}'
-            ),
+                text=checklist.name,
+                callback_data=f'show_{checklist.id}'
+            )
         )
 
-    builder.adjust(2)
+    builder.adjust(1)
 
     builder.row(
         InlineKeyboardButton(text='Создать ⏬', callback_data='add')

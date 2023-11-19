@@ -6,13 +6,16 @@ from src.bot.fsm import MainGroup
 from src.bot.keyboards.products import get_products_kb
 from src.db import Database
 
-router = Router(name='products_show')
+router = Router()
 
 
 @router.message(Command('products'))
 @router.message(F.text == 'Мои продукты 🌐')
 async def show(message: types.Message, state: FSMContext, db: Database) -> None:
-    kb = await get_products_kb(message.from_user, db)
+    async with db.session.begin():
+        user = await db.user.get(message.from_user.id)
+        kb = await get_products_kb(user.products)
+
     if len(kb.inline_keyboard) == 1:
         await message.answer('У Вас нет продуктов', reply_markup=kb)
     else:

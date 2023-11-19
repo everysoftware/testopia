@@ -11,7 +11,7 @@ routers = (
     run_router
 )
 
-router = Router(name='task_lists')
+router = Router(name='checklists')
 router.include_routers(*routers)
 
 router.message.middleware(DatabaseMd())

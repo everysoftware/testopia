@@ -25,9 +25,9 @@ class Product(Base):
         lazy='selectin'
     )
 
-    task_lists = relationship(
-        'TaskList',
+    checklists = relationship(
+        'Checklist',
         back_populates='product',
         lazy='selectin',
-        order_by='TaskList.name'
+        order_by='Checklist.name'
     )

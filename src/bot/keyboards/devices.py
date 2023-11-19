@@ -1,27 +1,23 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.db import Database
+from db.models import Device
 
 
 async def get_devices_kb(
-        db: Database,
-        user_id: int,
-        add_button: bool = True
+        devices: list[Device],
+        readonly: bool = True
 ) -> InlineKeyboardMarkup:
-    async with db.session.begin():
-        builder = InlineKeyboardBuilder()
-        user = await db.user.get(user_id)
-
-        for device in user.devices:
-            builder.add(InlineKeyboardButton(
-                text=device.name,
-                callback_data=f'select_{device.id}'
-            ))
+    builder = InlineKeyboardBuilder()
+    for device in devices:
+        builder.add(InlineKeyboardButton(
+            text=device.name,
+            callback_data=f'select_{device.id}'
+        ))
 
     builder.adjust(1)
 
-    if add_button:
+    if readonly:
         builder.row(
             InlineKeyboardButton(text='Добавить ⏬', callback_data='add')
         )
