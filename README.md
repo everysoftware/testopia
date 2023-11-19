@@ -11,7 +11,8 @@
 1. Запустите бота
 2. Добавяйте свои устройства и программные продукты для тестирования
 3. Создавайте и управляете задачами тестирования проекта
-4. Готово!
+4. Отслеживайте статистику прохождения тестов
+5. Готово!
 
 ## Стек технологий
 
@@ -30,11 +31,6 @@ BOT_LOGGING_LEVEL="INFO"
 
 BOT_TELEGRAM_TOKEN="YOUR_BOT_TELEGRAM_TOKEN"
 
-WEBHOOK_ON=0
-WEBHOOK_HOST="localhost"
-WEBHOOK_PORT=8080
-WEBHOOK_URL="YOUR_WEBHOOK_URL"
-
 POSTGRES_DB="postgres"
 POSTGRES_HOST="db"
 POSTGRES_PASSWORD="postgres"
@@ -49,11 +45,15 @@ REDIS_HOST="redis"
 REDIS_TTL_STATE=43200
 REDIS_TTL_DATA=43200
 
+WEBHOOK_ON=0
+WEBHOOK_HOST="localhost"
+WEBHOOK_PORT=8080
+WEBHOOK_URL="YOUR_WEBHOOK_URL"
    ```
 3. Соберите и запустите контейнеры Docker: ```docker-compose up -d --build```
 4. Готово!
 
-
+**Иконка приложения создана искусственным интеллектом.**  
 **Разработано специально для хакатона в рамках всероссийского конкурса "Студент года IT".** 
 
 **Made with ❤️ by @ivanstasevich**
