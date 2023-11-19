@@ -3,9 +3,9 @@
 Сделайте тестирование Вашего проекта лучше с системой тестирования Testopia!  
 [![Lint](https://github.com/everysoftware/testopia/actions/workflows/ci.yml/badge.svg)](https://github.com/everysoftware/testopia/actions/workflows/ci.yml)
 
-<img src="https://github.com/everysoftware/testopia/assets/22497421/bcdbbfa8-9200-4cf0-b548-76ff91d70ab2" width="250" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/88a12221-714e-460c-bf6f-55c66869143e" width="250" />  
 <img src="https://github.com/everysoftware/testopia/assets/22497421/48ade0dc-d188-40bf-a65f-60939e73f574" width="250" />  
-<img src="https://github.com/everysoftware/testopia/assets/22497421/ce682978-c804-4c28-a3ea-7461b8afb9b1" width="250" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/e880ca4c-c755-4fe1-9518-7816b1a8cac0" width="250" />  
 
 ## Начало работы
 1. Запустите бота
