@@ -3,10 +3,10 @@ from html import escape
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from bot.enums.task_state import TASK_STATE_TRANSLATIONS, TASK_STATE_EMOJI
-from bot.fsm import MainGroup
-from bot.keyboards.tasks import SHOW_TASK_KB
-from db import Database
+from src.bot.enums.task_state import TASK_STATE_TRANSLATIONS, TASK_STATE_EMOJI
+from src.bot.fsm import MainGroup
+from src.bot.keyboards.tasks import SHOW_TASK_KB
+from src.db import Database
 
 router = Router()
 

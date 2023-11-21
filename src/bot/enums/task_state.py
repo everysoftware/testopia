@@ -1,4 +1,4 @@
-from db.enums import TaskState
+from src.db.enums import TaskState
 
 TASK_STATE_EMOJI = {
     TaskState.SKIPPED: '🔵',

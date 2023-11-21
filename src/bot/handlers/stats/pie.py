@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sqlalchemy import Row, RowMapping, select
 
-from db.models import Task
+from src.db.models import Task
 from src.bot.enums.task_state import TASK_STATE_TRANSLATIONS, TASK_STATE_COLORS
 from src.bot.utils import DataVerifying
 from src.db import Database

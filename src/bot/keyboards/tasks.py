@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from bot.enums.task_state import TASK_STATE_EMOJI
+from src.bot.enums.task_state import TASK_STATE_EMOJI
 from src.db.models import Task
 
 EDIT_TASK_STATUS_KB = InlineKeyboardMarkup(

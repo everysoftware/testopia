@@ -1,7 +1,7 @@
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from bot.keyboards.devices import SHOW_DEVICE_KB
+from src.bot.keyboards.devices import SHOW_DEVICE_KB
 from src.bot.fsm import MainGroup
 from src.db import Database
 

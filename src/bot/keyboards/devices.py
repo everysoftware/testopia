@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from db.models import Device
+from src.db.models import Device
 
 SHOW_DEVICE_KB = InlineKeyboardMarkup(
     inline_keyboard=[

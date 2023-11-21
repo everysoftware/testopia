@@ -1,12 +1,12 @@
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from bot.fsm import MainGroup
-from bot.fsm.tasks import TaskGroup
-from bot.handlers.tasks.show_one import show_task
-from bot.keyboards.service import CANCEL_KB
-from db import Database
-from db.models import Comment
+from src.bot.fsm import MainGroup
+from src.bot.fsm.tasks import TaskGroup
+from src.bot.handlers.tasks.show_one import show_task
+from src.bot.keyboards.service import CANCEL_KB
+from src.db import Database
+from src.db.models import Comment
 
 router = Router()
 

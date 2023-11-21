@@ -1,7 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
 
-from bot.keyboards.service import CANCEL_KB
+from src.bot.keyboards.service import CANCEL_KB
 from src.bot.fsm import MainGroup
 from src.bot.fsm.devices import DeviceGroup
 from src.bot.handlers.devices.show import show as show_devices
