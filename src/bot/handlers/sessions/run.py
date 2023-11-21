@@ -10,14 +10,11 @@ from src.db import Database
 router = Router()
 
 
-@router.callback_query(F.data.startswith('run_'), MainGroup.viewing_tasks)
+@router.callback_query(F.data == 'run', MainGroup.viewing_tasks)
 async def run(call: types.CallbackQuery, state: FSMContext, db: Database) -> None:
-    checklist_id = int(call.data.split('_')[1])
-    await state.update_data(checklist_id=checklist_id)
-
     async with db.session.begin():
         user = await db.user.get(call.from_user.id)
-        kb = await get_devices_kb(user.devices, readonly=False)
+        kb = await get_devices_kb(user.devices, selecting_mode=True)
 
     if kb.inline_keyboard:
         await call.message.answer(
@@ -39,12 +36,10 @@ async def select_device(call: types.CallbackQuery, state: FSMContext, db: Databa
 
     async with db.session.begin():
         device = await db.device.get(device_id)
-        print(device)
-        print(user_data['checklist_id'])
         checklist = await db.checklist.get(user_data['checklist_id'])
 
         await call.message.answer(
-            'Начинаем сессию тестирования\n\n'
+            '<b>Начинаем сессию тестирования\n\n</b>'
             f'Продукт: {checklist.product.name}\n'
             f'Чек-лист: {checklist.name}\n'
             f'Устройство: {device.name}'
@@ -58,6 +53,6 @@ async def select_device(call: types.CallbackQuery, state: FSMContext, db: Databa
         True
     )
 
-    await state.set_state(ChecklistGroup.conducting_testing_session)
+    await state.set_state(MainGroup.conducting_testing_session)
 
     await call.answer()

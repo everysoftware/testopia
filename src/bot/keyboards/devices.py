@@ -3,10 +3,19 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from db.models import Device
 
+SHOW_DEVICE_KB = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Удалить ❌', callback_data='delete'),
+            InlineKeyboardButton(text='Назад ⬅️', callback_data='delete'),
+        ]
+    ]
+)
+
 
 async def get_devices_kb(
         devices: list[Device],
-        readonly: bool = True
+        selecting_mode: bool = False
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for device in devices:
@@ -17,9 +26,13 @@ async def get_devices_kb(
 
     builder.adjust(1)
 
-    if readonly:
+    if not selecting_mode:
         builder.row(
-            InlineKeyboardButton(text='Добавить ⏬', callback_data='add')
+            InlineKeyboardButton(text='Создать ➕', callback_data='add')
+        )
+    if selecting_mode:
+        builder.row(
+            InlineKeyboardButton(text='Назад ⬅️', callback_data='back')
         )
 
     return builder.as_markup(resize_keyboard=True)

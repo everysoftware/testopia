@@ -21,12 +21,20 @@ async def show_tasks(
         checklist = await db.checklist.get(checklist_id)
         kb = await get_tasks_kb(checklist.tasks, is_session_running=is_session_running)
 
-        if len(kb.inline_keyboard) == 1:
-            await message.answer(f'Чек-лист <b>{checklist.name}</b> (продукт: {checklist.product.name}) пуст',
-                                 reply_markup=kb)
+        cap = f'🗒 Чек-лист {checklist.name}\n\n' \
+              f'Продукт: {checklist.product.name}\n' \
+              f'Дата создания: {checklist.created_at}\n'
+
+        if len(kb.inline_keyboard) == 2:
+            await message.answer(
+                cap + 'Нет задач',
+                reply_markup=kb
+            )
         else:
-            await message.answer(f'Задачи чек-листа <b>{checklist.name}</b> (продукт: {checklist.product.name})',
-                                 reply_markup=kb)
+            await message.answer(
+                cap + 'Задачи:',
+                reply_markup=kb
+            )
 
     if not is_session_running:
         await state.set_state(MainGroup.viewing_tasks)

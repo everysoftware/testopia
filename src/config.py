@@ -45,11 +45,13 @@ class DatabaseConfig:
     host: str = getenv('POSTGRES_HOST', 'postgres')
 
     driver: str = 'asyncpg'
+    sync_driver: str = 'psycopg2'
     database_system: str = 'postgresql'
 
-    def build_connection_str(self) -> str:
+    def build_connection_str(self, asynchrony: bool = True) -> str:
+        driver = self.driver if asynchrony else self.sync_driver
         return URL.create(
-            drivername=f'{self.database_system}+{self.driver}',
+            drivername=f'{self.database_system}+{driver}',
             username=self.username,
             database=self.db,
             password=self.password,

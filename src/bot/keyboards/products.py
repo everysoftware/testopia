@@ -18,7 +18,7 @@ async def get_products_kb(
     builder.adjust(1)
 
     builder.row(
-        InlineKeyboardButton(text='Создать ⏬', callback_data='add')
+        InlineKeyboardButton(text='Создать ➕', callback_data='add')
     )
 
     return builder.as_markup(resize_keyboard=True)

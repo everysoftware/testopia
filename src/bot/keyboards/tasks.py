@@ -1,29 +1,8 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.db.enums import TaskState
+from bot.enums.task_state import TASK_STATE_EMOJI
 from src.db.models import Task
-
-TASK_STATES_COLORS = {
-    TaskState.SKIPPED: '🔵',
-    TaskState.FAILED: '🔴',
-    TaskState.PASSED: '🟢',
-    TaskState.IMPOSSIBLE: '🟡',
-}
-
-TASK_STATES_CB_DATA = {
-    'skipped': TaskState.SKIPPED,
-    'failed': TaskState.FAILED,
-    'passed': TaskState.PASSED,
-    'impossible': TaskState.IMPOSSIBLE
-}
-
-TASK_STATES_TRANSLATIONS = {
-    'SKIPPED': 'Пропущен',
-    'FAILED': 'Не пройден',
-    'IMPOSSIBLE': 'Невозможно пройти',
-    'PASSED': 'Пройден'
-}
 
 EDIT_TASK_STATUS_KB = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -38,6 +17,35 @@ EDIT_TASK_STATUS_KB = InlineKeyboardMarkup(
     ]
 )
 
+SHOW_TASK_KB = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text='✏️',
+                callback_data='edit'
+            ),
+            InlineKeyboardButton(
+                text='💬',
+                callback_data='comment'
+            ),
+            InlineKeyboardButton(
+                text='🔗',
+                callback_data='report'
+            ),
+            InlineKeyboardButton(
+                text='❌',
+                callback_data='delete'
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text='Назад ⬅️',
+                callback_data='back'
+            )
+        ]
+    ]
+)
+
 
 async def get_tasks_kb(
         tasks: list[Task],
@@ -48,34 +56,19 @@ async def get_tasks_kb(
     for task in tasks:
         builder.row(
             InlineKeyboardButton(
-                text=f'{task.name} {TASK_STATES_COLORS[task.state]}',
+                text=f'{task.name} {TASK_STATE_EMOJI[task.state]}',
                 callback_data=f'show_{task.id}'
             )
         )
 
-        if is_session_running:
-            builder.row(
-                InlineKeyboardButton(
-                    text='✏️',
-                    callback_data=f'edit_{task.id}'
-                ),
-                InlineKeyboardButton(
-                    text='💬',
-                    callback_data=f'comment_{task.id}'
-                ),
-                InlineKeyboardButton(
-                    text='🔗',
-                    callback_data=f'report_{task.id}'
-                ),
-            )
-
     if not is_session_running:
         builder.row(
-            InlineKeyboardButton(text='Создать задачу ⏬', callback_data='add')
+            InlineKeyboardButton(text='Создать ➕', callback_data='add'),
+            InlineKeyboardButton(text='Удалить чек-лист ❌', callback_data='delete')
         )
-        if tasks:
-            builder.row(
-                InlineKeyboardButton(text='Начать сессию ▶️', callback_data=f'run_{tasks[0].checklist.id}')
-            )
+
+    builder.row(
+        InlineKeyboardButton(text='Назад ⬅️', callback_data='back')
+    )
 
     return builder.as_markup(resize_keyboard=True)

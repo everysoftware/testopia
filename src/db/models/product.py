@@ -11,7 +11,10 @@ class Product(Base):
 
     id: Mapped[int] = mapped_column(Identity(), primary_key=True, unique=True)
     name: Mapped[str]
-    owner_id: Mapped[int] = mapped_column(ForeignKey('users.user_id'))
+    owner_id: Mapped[int] = mapped_column(ForeignKey(
+        'users.user_id',
+        ondelete='cascade'
+    ))
 
     created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow)
     updated_at: Mapped[datetime.datetime] = mapped_column(
@@ -22,7 +25,8 @@ class Product(Base):
     owner = relationship(
         'User',
         back_populates='products',
-        lazy='selectin'
+        lazy='selectin',
+        uselist=False
     )
 
     checklists = relationship(

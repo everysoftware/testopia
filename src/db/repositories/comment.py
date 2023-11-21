@@ -10,11 +10,9 @@ class CommentRepo(Repository[Comment]):
 
     def new(
             self,
-            task_id: int,
             text: str
     ) -> Comment:
         obj = Comment(
-            task_id=task_id,
             text=text
         )
         self.session.add(obj)

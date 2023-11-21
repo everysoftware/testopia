@@ -1,6 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
 
+from bot.keyboards.service import CANCEL_KB
 from src.bot.fsm import MainGroup
 from src.bot.fsm.products import ProductGroup
 from src.bot.handlers.products.show import show
@@ -12,7 +13,8 @@ router = Router()
 @router.callback_query(F.data == 'add', MainGroup.viewing_products)
 async def name(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.message.answer(
-        'Назовите продукт. Например, VK Android App'
+        'Назовите продукт. Например, <code>VK Android App</code>',
+        reply_markup=CANCEL_KB
     )
     await state.set_state(ProductGroup.adding_product)
 

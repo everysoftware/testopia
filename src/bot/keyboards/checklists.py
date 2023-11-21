@@ -20,7 +20,11 @@ async def get_checklist_kb(
     builder.adjust(1)
 
     builder.row(
-        InlineKeyboardButton(text='Создать ⏬', callback_data='add')
+        InlineKeyboardButton(text='Создать ➕', callback_data='add'),
+        InlineKeyboardButton(text='Удалить продукт ❌', callback_data='delete')
+    )
+    builder.row(
+        InlineKeyboardButton(text='Назад ⬅️', callback_data='back')
     )
 
     return builder.as_markup(resize_keyboard=True)

@@ -10,11 +10,9 @@ class ReportRepo(Repository[Report]):
 
     def new(
             self,
-            task_id: int,
             url: str
     ) -> Report:
         obj = Report(
-            task_id=task_id,
             url=url
         )
         self.session.add(obj)

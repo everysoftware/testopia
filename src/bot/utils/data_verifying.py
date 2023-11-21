@@ -3,7 +3,7 @@ import os
 from typing import Optional
 
 
-class Verifying:
+class DataVerifying:
     @classmethod
     def generate_salt(cls) -> bytes:
         return os.urandom(16)

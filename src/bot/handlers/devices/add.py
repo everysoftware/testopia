@@ -1,6 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
 
+from bot.keyboards.service import CANCEL_KB
 from src.bot.fsm import MainGroup
 from src.bot.fsm.devices import DeviceGroup
 from src.bot.handlers.devices.show import show as show_devices
@@ -11,7 +12,10 @@ router = Router()
 
 @router.callback_query(F.data == 'add', MainGroup.viewing_devices)
 async def name(call: types.CallbackQuery, state: FSMContext) -> None:
-    await call.message.answer('Назовите устройство. Например, iPhone 13 - iOS 16.1 | Mobile')
+    await call.message.answer(
+        'Назовите устройство. Например, <code>iPhone 13</code>',
+        reply_markup=CANCEL_KB
+    )
     await state.set_state(DeviceGroup.adding_device)
 
     await call.answer()

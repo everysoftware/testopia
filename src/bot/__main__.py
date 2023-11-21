@@ -8,7 +8,7 @@ from aiohttp import web
 
 from src.cache import Cache
 from src.config import cfg
-from src.db import create_async_engine, get_session_maker
+from src.db import create_async_engine, create_session_maker
 from .api import generate_secret, on_startup, on_shutdown
 from .dispatcher import create_dispatcher, create_redis_storage
 
@@ -39,7 +39,7 @@ def main() -> None:
 
     cache = Cache()
     storage = create_redis_storage(cache.client)
-    session_maker = get_session_maker(create_async_engine(cfg.db.build_connection_str()))
+    session_maker = create_session_maker(create_async_engine(cfg.db.build_connection_str()))
     secret = generate_secret() if cfg.webhook.on else ''
 
     dp = create_dispatcher(

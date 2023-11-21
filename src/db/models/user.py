@@ -36,3 +36,14 @@ class User(Base):
         lazy='selectin',
         order_by='Device.name'
     )
+    tasks = relationship(
+        'Task',
+        back_populates='user',
+        lazy='selectin',
+        order_by='Task.name'
+    )
+    checklists = relationship(
+        'Checklist',
+        back_populates='user',
+        lazy='selectin'
+    )

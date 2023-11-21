@@ -23,5 +23,6 @@ class Device(Base):
     user = relationship(
         'User',
         back_populates='devices',
-        lazy='selectin'
+        lazy='selectin',
+        uselist=False
     )

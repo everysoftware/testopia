@@ -8,3 +8,6 @@ class MainGroup(StatesGroup):
     viewing_stats = State()
     viewing_tasks = State()
     viewing_checklists = State()
+    viewing_task = State()
+    conducting_testing_session = State()
+    viewing_device = State()
