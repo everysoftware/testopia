@@ -5,7 +5,7 @@
 
 <img src="https://github.com/everysoftware/testopia/assets/22497421/88a12221-714e-460c-bf6f-55c66869143e" width="250" />  
 <img src="https://github.com/everysoftware/testopia/assets/22497421/3daca09d-3510-424d-98e9-7651044218d7" width="250" />  
-<img src="https://github.com/everysoftware/testopia/assets/22497421/e880ca4c-c755-4fe1-9518-7816b1a8cac0" width="250" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/382e5b1e-2da7-43e8-afe5-12180835a3c4" width="250" />  
 
 ## Начало работы
 1. Запустите бота
