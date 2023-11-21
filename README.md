@@ -4,8 +4,8 @@
 [![Lint](https://github.com/everysoftware/testopia/actions/workflows/ci.yml/badge.svg)](https://github.com/everysoftware/testopia/actions/workflows/ci.yml)
 
 <img src="https://github.com/everysoftware/testopia/assets/22497421/88a12221-714e-460c-bf6f-55c66869143e" width="250" />  
-<img src="https://github.com/everysoftware/testopia/assets/22497421/3daca09d-3510-424d-98e9-7651044218d7" width="250" />  
-<img src="https://github.com/everysoftware/testopia/assets/22497421/19709861-dccd-4b41-a832-b9433c931af5" width="250" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/e9c5ab19-1f8b-4ae1-bd4b-6864bfbeb4de" width="250" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/027d0d75-66b9-4ae0-98df-e6bb116b10f1" width="250" />  
 
 ## Начало работы
 1. Запустите бота
