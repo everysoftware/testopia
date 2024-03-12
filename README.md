@@ -1,6 +1,6 @@
 # Testopia
 
-Сделайте тестирование Вашего проекта лучше с системой тестирования Testopia!  
+Сделайте тестирование Вашего проекта лучше с трекером Testopia!  
 [![Lint](https://github.com/everysoftware/testopia/actions/workflows/ci.yml/badge.svg)](https://github.com/everysoftware/testopia/actions/workflows/ci.yml)
 
 <img src="https://github.com/everysoftware/testopia/assets/22497421/88a12221-714e-460c-bf6f-55c66869143e" width="250" />  
@@ -16,7 +16,7 @@
 
 ## Стек технологий
 
-Python3 • Aiogram3 • PostgreSQL • SQLAlchemy 2 • Alembic • Redis • arq • Aiottp • Docker • Ruff • NumPy • Pandas • Matplotlib  
+Python3 • Aiogram3 • PostgreSQL • SQLAlchemy • Alembic • Redis • arq • Aiottp • Docker • Ruff • NumPy • Pandas • Matplotlib  
 [Макеты Figma](https://www.figma.com/file/iJ7SMg6DCuCaDhNlieh3kd/Untitled?type=design&node-id=0-1&mode=design)
 
 ## Сборка
