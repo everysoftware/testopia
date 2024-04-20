@@ -9,11 +9,8 @@ class DataVerifying:
         return os.urandom(16)
 
     @classmethod
-    def get_hash(
-            cls,
-            data: str,
-            salt: Optional[bytes] = None) -> str:
-        data_with_salt = data.encode('utf-8')
+    def get_hash(cls, data: str, salt: Optional[bytes] = None) -> str:
+        data_with_salt = data.encode("utf-8")
 
         if salt:
             data_with_salt += salt
@@ -23,10 +20,5 @@ class DataVerifying:
         return hashed_password
 
     @classmethod
-    def verify(
-            cls,
-            data: str,
-            data_hash: str,
-            salt: Optional[bytes] = None
-    ) -> bool:
+    def verify(cls, data: str, data_hash: str, salt: Optional[bytes] = None) -> bool:
         return cls.get_hash(data, salt) == data_hash

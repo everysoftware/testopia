@@ -8,12 +8,12 @@ from .task import TaskRepo
 from .user import UserRepo
 
 __all__ = (
-    'Repository',
-    'CommentRepo',
-    'ChecklistRepo',
-    'DeviceRepo',
-    'ReportRepo',
-    'TaskRepo',
-    'UserRepo',
-    'ProductRepo'
+    "Repository",
+    "CommentRepo",
+    "ChecklistRepo",
+    "DeviceRepo",
+    "ReportRepo",
+    "TaskRepo",
+    "UserRepo",
+    "ProductRepo",
 )

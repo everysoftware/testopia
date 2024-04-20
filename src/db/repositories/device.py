@@ -9,9 +9,9 @@ class DeviceRepo(Repository[Device]):
         super().__init__(type_model=Device, session=session)
 
     def new(
-            self,
-            user_id: int,
-            name: str,
+        self,
+        user_id: int,
+        name: str,
     ) -> Device:
         obj = Device(
             user_id=user_id,

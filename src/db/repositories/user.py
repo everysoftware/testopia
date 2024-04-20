@@ -11,12 +11,12 @@ class UserRepo(Repository[User]):
         super().__init__(type_model=User, session=session)
 
     def new(
-            self,
-            user_id: int,
-            first_name: str,
-            language_code: Optional[str] = None,
-            last_name: Optional[str] = None,
-            username: Optional[str] = None,
+        self,
+        user_id: int,
+        first_name: str,
+        language_code: Optional[str] = None,
+        last_name: Optional[str] = None,
+        username: Optional[str] = None,
     ) -> User:
         obj = User(
             user_id=user_id,

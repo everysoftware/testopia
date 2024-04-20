@@ -10,11 +10,11 @@ from src.db import Database
 router = Router()
 
 
-@router.callback_query(F.data == 'add', MainGroup.viewing_products)
+@router.callback_query(F.data == "add", MainGroup.viewing_products)
 async def name(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.message.answer(
-        'Назовите продукт. Например, <code>VK Android App</code>',
-        reply_markup=CANCEL_KB
+        "Назовите продукт. Например, <code>VK Android App</code>",
+        reply_markup=CANCEL_KB,
     )
     await state.set_state(ProductGroup.adding_product)
 
@@ -24,10 +24,7 @@ async def name(call: types.CallbackQuery, state: FSMContext) -> None:
 @router.message(ProductGroup.adding_product)
 async def add(message: types.Message, state: FSMContext, db: Database) -> None:
     async with db.session.begin():
-        db.product.new(
-            owner_id=message.from_user.id,
-            name=message.text
-        )
+        db.product.new(owner_id=message.from_user.id, name=message.text)
 
-    await message.answer('Продукт успешно создан!')
+    await message.answer("Продукт успешно создан!")
     await show(message, state, db)

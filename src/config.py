@@ -10,9 +10,9 @@ from sqlalchemy.engine import URL
 
 
 def setup_env() -> None:
-    if os.getenv('TESTING_MODE') is None and os.getenv('DOCKER_MODE') is None:
+    if os.getenv("TESTING_MODE") is None and os.getenv("DOCKER_MODE") is None:
         path = pathlib.Path(__file__).parent.parent
-        dotenv_path = path.joinpath('.dev.env')
+        dotenv_path = path.joinpath(".dev.env")
         if dotenv_path.exists():
             load_dotenv(dotenv_path)
 
@@ -22,36 +22,36 @@ setup_env()
 
 @dataclass(frozen=True)
 class BotConfig:
-    tg_token: Optional[str] = getenv('BOT_TELEGRAM_TOKEN')
+    tg_token: Optional[str] = getenv("BOT_TELEGRAM_TOKEN")
 
 
 @dataclass(frozen=True)
 class WebhookConfig:
-    on: bool = bool(int(getenv('WEBHOOK_ON', False)))
-    ngrok_url: Optional[str] = getenv('WEBHOOK_URL')
-    host: str = getenv('WEBHOOK_HOST', 'localhost')
-    port: int = int(getenv('WEBHOOK_PORT', 8080))
-    path: str = f'/bot/{BotConfig.tg_token}'
-    url: str = f'{ngrok_url}{path}'
+    on: bool = bool(int(getenv("WEBHOOK_ON", False)))
+    ngrok_url: Optional[str] = getenv("WEBHOOK_URL")
+    host: str = getenv("WEBHOOK_HOST", "localhost")
+    port: int = int(getenv("WEBHOOK_PORT", 8080))
+    path: str = f"/bot/{BotConfig.tg_token}"
+    url: str = f"{ngrok_url}{path}"
 
 
 @dataclass(frozen=True)
 class DatabaseConfig:
-    db: str = getenv('POSTGRES_DB', 'postgres')
-    username: str = getenv('POSTGRES_USER', 'postgres')
-    password: str = getenv('POSTGRES_PASSWORD', 'postgres')
+    db: str = getenv("POSTGRES_DB", "postgres")
+    username: str = getenv("POSTGRES_USER", "postgres")
+    password: str = getenv("POSTGRES_PASSWORD", "postgres")
 
-    port: int = int(getenv('POSTGRES_PORT', 5432))
-    host: str = getenv('POSTGRES_HOST', 'postgres')
+    port: int = int(getenv("POSTGRES_PORT", 5432))
+    host: str = getenv("POSTGRES_HOST", "postgres")
 
-    driver: str = 'asyncpg'
-    sync_driver: str = 'psycopg2'
-    database_system: str = 'postgresql'
+    driver: str = "asyncpg"
+    sync_driver: str = "psycopg2"
+    database_system: str = "postgresql"
 
     def build_connection_str(self, asynchrony: bool = True) -> str:
         driver = self.driver if asynchrony else self.sync_driver
         return URL.create(
-            drivername=f'{self.database_system}+{driver}',
+            drivername=f"{self.database_system}+{driver}",
             username=self.username,
             database=self.db,
             password=self.password,
@@ -62,28 +62,25 @@ class DatabaseConfig:
 
 @dataclass(frozen=True)
 class RedisConfig:
-    db: str = getenv('REDIS_DATABASE', 1)
-    username: str = getenv('REDIS_USERNAME', 'redis')
-    password: Optional[str] = getenv('REDIS_PASSWORD')
-    port: int = int(getenv('REDIS_PORT', 6379))
-    host: str = getenv('REDIS_HOST', 'localhost')
+    db: str = getenv("REDIS_DATABASE", 1)
+    username: str = getenv("REDIS_USERNAME", "redis")
+    password: Optional[str] = getenv("REDIS_PASSWORD")
+    port: int = int(getenv("REDIS_PORT", 6379))
+    host: str = getenv("REDIS_HOST", "localhost")
 
-    state_ttl: Optional[int] = getenv('REDIS_TTL_STATE')
-    data_ttl: Optional[int] = getenv('REDIS_TTL_DATA')
+    state_ttl: Optional[int] = getenv("REDIS_TTL_STATE")
+    data_ttl: Optional[int] = getenv("REDIS_TTL_DATA")
 
     pool_settings = RedisSettings(
-        username=username,
-        password=password,
-        port=port,
-        host=host
+        username=username, password=password, port=port, host=host
     )
 
 
 @dataclass(frozen=True)
 class Config:
-    mode: str = getenv('BOT_MODE', 'dev')
-    debug: bool = bool(getenv('BOT_DEBUG'))
-    logging_level: int = getenv('BOT_LOGGING_LEVEL', 'INFO')
+    mode: str = getenv("BOT_MODE", "dev")
+    debug: bool = bool(getenv("BOT_DEBUG"))
+    logging_level: int = getenv("BOT_LOGGING_LEVEL", "INFO")
 
     bot: BotConfig = BotConfig()
     webhook: WebhookConfig = WebhookConfig()

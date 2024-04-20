@@ -27,22 +27,18 @@ async def pie_plot(db: Database, user_id: int) -> str:
     colors = [TASK_STATE_COLORS[x[0]] for x in lst]
 
     plt.figure()
-    my_circle = plt.Circle((0, 0), 0.8, color='white')
+    my_circle = plt.Circle((0, 0), 0.8, color="white")
 
     # Create a pie chart of the filtered data
-    plt.pie(class_values,
-            labels=class_names,
-            autopct="%.0f%%",
-            colors=colors
-            )
+    plt.pie(class_values, labels=class_names, autopct="%.0f%%", colors=colors)
 
     p = plt.gcf()
     p.gca().add_artist(my_circle)
-    plt.title('Состояние прохождения тестов')
+    plt.title("Состояние прохождения тестов")
 
     pie_id = DataVerifying.get_hash(str(user_id), DataVerifying.generate_salt())
-    plt.savefig(f'static/pie_{pie_id}.png')
+    plt.savefig(f"static/pie_{pie_id}.png")
 
     plt.close()
 
-    return f'static/pie_{pie_id}.png'
+    return f"static/pie_{pie_id}.png"

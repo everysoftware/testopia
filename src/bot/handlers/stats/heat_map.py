@@ -22,12 +22,13 @@ async def get_data(db: Database, user_id: int) -> Sequence[Row[tuple[Any, Any]]]
         stmt = (
             select(
                 func.count(Task.id),  # Считаем количество задач
-                func.date(Task.updated_at)
+                func.date(Task.updated_at),
             )
             .where(
                 Task.user_id == user_id,  # Фильтруем по ID пользователя
                 Task.state == TaskState.PASSED,  # Фильтруем по состоянию задачи
-                Task.updated_at >= year_ago  # Фильтруем задачи, обновленные за последний год
+                Task.updated_at
+                >= year_ago,  # Фильтруем задачи, обновленные за последний год
             )
             .group_by(func.date(Task.updated_at))  # Группируем по дню обновления
         )
@@ -44,10 +45,8 @@ async def heat_map(db: Database, user_id: int) -> str:
     if task_counts:
         commits = pd.Series({date: count for count, date in task_counts})
         # Добавляем минимальное значение.
-        commits = commits.add(pd.Series({
-            datetime.date(2004, 2, 18): 0
-        }), fill_value=0)
-        commits = commits.astype('int64')
+        commits = commits.add(pd.Series({datetime.date(2004, 2, 18): 0}), fill_value=0)
+        commits = commits.astype("int64")
         commits.index = pd.to_datetime(commits.index)
 
         # Увеличиваем размер фигуры
@@ -56,18 +55,31 @@ async def heat_map(db: Database, user_id: int) -> str:
         # Рисуем тепловую карту
         calmap.yearplot(
             commits,
-            cmap='Greens',
+            cmap="Greens",
             year=datetime.datetime.utcnow().year,
-            monthlabels=['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-            daylabels=['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Cб', 'Вс'],
-            dayticks=[1, 3, 5]
+            monthlabels=[
+                "Янв",
+                "Фев",
+                "Мар",
+                "Апр",
+                "Май",
+                "Июн",
+                "Июл",
+                "Авг",
+                "Сен",
+                "Окт",
+                "Ноя",
+                "Дек",
+            ],
+            daylabels=["Пн", "Вт", "Ср", "Чт", "Пт", "Cб", "Вс"],
+            dayticks=[1, 3, 5],
         )
 
-        plt.title(f'{commits.sum()} пройденных тестов за последний год')
+        plt.title(f"{commits.sum()} пройденных тестов за последний год")
 
     # Сохраняем карту
     heat_map_id = DataVerifying.get_hash(str(user_id), DataVerifying.generate_salt())
-    path = f'static/pie_{heat_map_id}.png'
+    path = f"static/pie_{heat_map_id}.png"
     plt.savefig(path)
 
     # Очищаем фигуру

@@ -21,9 +21,7 @@ def start_webhook(bot: Bot, dp: Dispatcher, secret: str) -> None:
     app = web.Application()
 
     webhook_requests_handler = SimpleRequestHandler(
-        dispatcher=dp,
-        bot=bot,
-        secret_token=secret
+        dispatcher=dp, bot=bot, secret_token=secret
     )
 
     webhook_requests_handler.register(app, path=cfg.webhook.path)
@@ -35,19 +33,16 @@ def start_webhook(bot: Bot, dp: Dispatcher, secret: str) -> None:
 def main() -> None:
     logging.basicConfig(level=cfg.logging_level, stream=sys.stdout)
 
-    bot = Bot(cfg.bot.tg_token, parse_mode='HTML')
+    bot = Bot(cfg.bot.tg_token, parse_mode="HTML")
 
     cache = Cache()
     storage = create_redis_storage(cache.client)
-    session_maker = create_session_maker(create_async_engine(cfg.db.build_connection_str()))
-    secret = generate_secret() if cfg.webhook.on else ''
-
-    dp = create_dispatcher(
-        storage,
-        cache,
-        session_maker,
-        secret
+    session_maker = create_session_maker(
+        create_async_engine(cfg.db.build_connection_str())
     )
+    secret = generate_secret() if cfg.webhook.on else ""
+
+    dp = create_dispatcher(storage, cache, session_maker, secret)
 
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
@@ -58,8 +53,8 @@ def main() -> None:
         start_polling(bot, dp)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
-        logging.info('Bot stopped')
+        logging.info("Bot stopped")

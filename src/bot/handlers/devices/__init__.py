@@ -5,13 +5,9 @@ from .show import router as show_router
 from .show_one import router as show_one_router
 from ...middlewares import DatabaseMd
 
-routers = (
-    add_router,
-    show_router,
-    show_one_router
-)
+routers = (add_router, show_router, show_one_router)
 
-router = Router(name='devices')
+router = Router(name="devices")
 router.include_routers(*routers)
 
 router.message.middleware(DatabaseMd())

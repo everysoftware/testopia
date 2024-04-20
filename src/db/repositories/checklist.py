@@ -8,14 +8,7 @@ class ChecklistRepo(Repository[Checklist]):
     def __init__(self, session: AsyncSession):
         super().__init__(type_model=Checklist, session=session)
 
-    def new(
-            self,
-            name: str,
-            product_id: int
-    ) -> Checklist:
-        obj = Checklist(
-            product_id=product_id,
-            name=name
-        )
+    def new(self, name: str, product_id: int) -> Checklist:
+        obj = Checklist(product_id=product_id, name=name)
         self.session.add(obj)
         return obj

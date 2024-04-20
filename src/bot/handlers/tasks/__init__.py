@@ -17,7 +17,7 @@ routers = (
     show_one_router,
 )
 
-router = Router(name='tasks')
+router = Router(name="tasks")
 router.include_routers(*routers)
 
 router.message.middleware(DatabaseMd())

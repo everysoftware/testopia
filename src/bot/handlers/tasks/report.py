@@ -11,11 +11,10 @@ from src.db.models import Report
 router = Router()
 
 
-@router.callback_query(F.data == 'report', MainGroup.viewing_task)
+@router.callback_query(F.data == "report", MainGroup.viewing_task)
 async def url(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.message.answer(
-        'Введите ссылку на отчёт об ошибках',
-        reply_markup=CANCEL_KB
+        "Введите ссылку на отчёт об ошибках", reply_markup=CANCEL_KB
     )
     await state.set_state(TaskGroup.editing_report)
 
@@ -27,7 +26,7 @@ async def edit_report(message: types.Message, state: FSMContext, db: Database) -
     user_data = await state.get_data()
 
     async with db.session.begin():
-        task = await db.task.get(user_data['task_id'])
+        task = await db.task.get(user_data["task_id"])
         report: Report = task.report
         if report is None:
             task.report = db.report.new(url=message.text)
@@ -36,11 +35,6 @@ async def edit_report(message: types.Message, state: FSMContext, db: Database) -
             report.url = message.text
             await db.report.merge(report)
 
-    await message.answer('Ссылка на отчёт об ошибках успешно обновлена!')
+    await message.answer("Ссылка на отчёт об ошибках успешно обновлена!")
 
-    await show_task(
-        message,
-        state,
-        db,
-        user_data['task_id']
-    )
+    await show_task(message, state, db, user_data["task_id"])

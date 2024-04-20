@@ -9,14 +9,12 @@ from src.config import cfg
 
 
 def create_async_engine(url: URL | str) -> AsyncEngine:
-    return create_async_engine_(url=url,
-                                echo=cfg.debug,
-                                pool_pre_ping=True)
+    return create_async_engine_(url=url, echo=cfg.debug, pool_pre_ping=True)
 
 
 def create_session_maker(engine: Optional[AsyncEngine] = None) -> sessionmaker:
     return sessionmaker(
         engine or create_async_engine(cfg.db.build_connection_str()),
         class_=AsyncSession,
-        expire_on_commit=False
+        expire_on_commit=False,
     )

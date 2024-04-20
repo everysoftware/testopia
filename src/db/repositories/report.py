@@ -8,12 +8,7 @@ class ReportRepo(Repository[Report]):
     def __init__(self, session: AsyncSession):
         super().__init__(type_model=Report, session=session)
 
-    def new(
-            self,
-            url: str
-    ) -> Report:
-        obj = Report(
-            url=url
-        )
+    def new(self, url: str) -> Report:
+        obj = Report(url=url)
         self.session.add(obj)
         return obj

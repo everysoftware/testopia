@@ -9,16 +9,16 @@ from src.db import Database
 router = Router()
 
 
-@router.message(Command('devices'))
-@router.message(F.text == 'Мои устройства 📱')
+@router.message(Command("devices"))
+@router.message(F.text == "Мои устройства 📱")
 async def show(message: types.Message, state: FSMContext, db: Database) -> None:
     async with db.session.begin():
         user = await db.user.get(message.from_user.id)
         kb = await get_devices_kb(user.devices)
 
     if len(kb.inline_keyboard) == 1:
-        await message.answer('У Вас нет устройств', reply_markup=kb)
+        await message.answer("У Вас нет устройств", reply_markup=kb)
     else:
-        await message.answer('Ваши устройства', reply_markup=kb)
+        await message.answer("Ваши устройства", reply_markup=kb)
 
     await state.set_state(MainGroup.viewing_devices)

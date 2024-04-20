@@ -242,3 +242,5 @@ cython_debug/
 .dev.env
 presentation
 images
+.idea
+

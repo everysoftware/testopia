@@ -11,7 +11,7 @@ routers = (
     devices_router,
     checklists_router,
     tasks_router,
-    stats_router
+    stats_router,
 )
 
-__all__ = ('routers',)
+__all__ = ("routers",)

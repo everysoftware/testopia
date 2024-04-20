@@ -7,31 +7,28 @@ from .base import Base
 
 
 class Product(Base):
-    __tablename__ = 'products'
+    __tablename__ = "products"
 
     id: Mapped[int] = mapped_column(Identity(), primary_key=True, unique=True)
     name: Mapped[str]
-    owner_id: Mapped[int] = mapped_column(ForeignKey(
-        'users.user_id',
-        ondelete='cascade'
-    ))
+    owner_id: Mapped[int] = mapped_column(
+        ForeignKey("users.user_id", ondelete="cascade")
+    )
 
-    created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        default=datetime.datetime.utcnow
+    )
     updated_at: Mapped[datetime.datetime] = mapped_column(
-        default=datetime.datetime.utcnow,
-        onupdate=datetime.datetime.utcnow
+        default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
 
     owner = relationship(
-        'User',
-        back_populates='products',
-        lazy='selectin',
-        uselist=False
+        "User", back_populates="products", lazy="selectin", uselist=False
     )
 
     checklists = relationship(
-        'Checklist',
-        back_populates='product',
-        lazy='selectin',
-        order_by='Checklist.name'
+        "Checklist",
+        back_populates="product",
+        lazy="selectin",
+        order_by="Checklist.name",
     )

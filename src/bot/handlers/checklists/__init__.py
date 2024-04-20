@@ -9,7 +9,7 @@ routers = (
     show_router,
 )
 
-router = Router(name='checklists')
+router = Router(name="checklists")
 router.include_routers(*routers)
 
 router.message.middleware(DatabaseMd())

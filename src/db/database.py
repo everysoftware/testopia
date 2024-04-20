@@ -7,7 +7,7 @@ from src.db.repositories import (
     ReportRepo,
     DeviceRepo,
     ProductRepo,
-    ChecklistRepo
+    ChecklistRepo,
 )
 
 

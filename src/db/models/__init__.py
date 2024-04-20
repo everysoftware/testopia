@@ -8,12 +8,12 @@ from .task import Task
 from .user import User
 
 __all__ = (
-    'Base',
-    'User',
-    'Comment',
-    'Device',
-    'Report',
-    'Task',
-    'Product',
-    'Checklist'
+    "Base",
+    "User",
+    "Comment",
+    "Device",
+    "Report",
+    "Task",
+    "Product",
+    "Checklist",
 )

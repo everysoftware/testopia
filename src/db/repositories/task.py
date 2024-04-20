@@ -9,10 +9,10 @@ class TaskRepo(Repository[Task]):
         super().__init__(type_model=Task, session=session)
 
     def new(
-            self,
-            user_id: int,
-            checklist_id: int,
-            name: str,
+        self,
+        user_id: int,
+        checklist_id: int,
+        name: str,
     ) -> Task:
         obj = Task(
             user_id=user_id,
