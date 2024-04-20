@@ -3,7 +3,7 @@
 Сделайте тестирование Вашего проекта лучше с трекером Testopia!  
 [![Lint](https://github.com/everysoftware/testopia/actions/workflows/ci.yml/badge.svg)](https://github.com/everysoftware/testopia/actions/workflows/ci.yml)
 
-<img src="https://github.com/everysoftware/testopia/assets/22497421/88a12221-714e-460c-bf6f-55c66869143e" width="250" />  
+<img src="https://github.com/everysoftware/testopia/assets/22497421/7b5582a4-3603-462a-a436-e2eac7d646ba" width="250" />  
 <img src="https://github.com/everysoftware/testopia/assets/22497421/e9c5ab19-1f8b-4ae1-bd4b-6864bfbeb4de" width="250" />  
 <img src="https://github.com/everysoftware/testopia/assets/22497421/027d0d75-66b9-4ae0-98df-e6bb116b10f1" width="250" />  
 
