@@ -1,6 +1,6 @@
-# Testopia
+# Testopia - таск-трекер для тестировщиков
 
-Сделайте тестирование Вашего проекта лучше с трекером Testopia!  
+Сделайте тестирование Вашего проекта лучше с **Testopia**!  
 [![Lint](https://github.com/everysoftware/testopia/actions/workflows/ci.yml/badge.svg)](https://github.com/everysoftware/testopia/actions/workflows/ci.yml)
 
 <img src="https://github.com/everysoftware/testopia/assets/22497421/7b5582a4-3603-462a-a436-e2eac7d646ba" width="250" />  
@@ -16,7 +16,8 @@
 
 ## Стек технологий
 
-Python3 • Aiogram3 • PostgreSQL • SQLAlchemy • Alembic • Redis • arq • Aiottp • Docker • Ruff • NumPy • Pandas • Matplotlib  
+Python3 • Aiogram3 • PostgreSQL • SQLAlchemy • Redis • Docker • NumPy • Pandas • Matplotlib  
+
 [Макеты Figma](https://www.figma.com/file/iJ7SMg6DCuCaDhNlieh3kd/Untitled?type=design&node-id=0-1&mode=design)
 
 ## Сборка
@@ -24,8 +25,6 @@ Python3 • Aiogram3 • PostgreSQL • SQLAlchemy • Alembic • Redis • arq
 1. Создайте файл окружения ```.env```.
 ```
 BOT_MODE="docker"
-
-
 BOT_DEBUG=0
 BOT_LOGGING_LEVEL="INFO"
 
