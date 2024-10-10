@@ -6,7 +6,7 @@ import pandas as pd
 from pandas import DatetimeIndex
 
 from db.enums import TaskState
-from src.config import cfg
+from app.config import cfg
 
 
 def generate_tasks(
@@ -54,4 +54,4 @@ async def fill_db(
     print("Successfully inserted!")
 
 
-asyncio.run(fill_db(418849724, 9, number=1000, state=TaskState.PASSED))
+asyncio.run(fill_db(418849724, 9, number=1000, state=TaskState.passed))

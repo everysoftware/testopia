@@ -1,48 +1,45 @@
-version: '3.7'
 services:
   redis:
-    build:
-      context: buildfiles
-      dockerfile: RedisDockerfile
+    image: redis:latest
     env_file:
       - .env
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "6379:6379"
+    # Set credentials & logging
+    command: >
+      sh -c '
+        mkdir -p /usr/local/etc/redis &&
+        echo "bind 0.0.0.0" > /usr/local/etc/redis/redis.conf &&
+        echo "appendonly yes" >> /usr/local/etc/redis/redis.conf &&
+        echo "user default on >$REDIS_PASSWORD ~* +@all" > /usr/local/etc/redis/users.acl &&
+        redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
+      '
+    volumes:
+      - redis_data:/var/lib/redis/data
+
   db:
     image: postgres:15-alpine
     env_file:
       - .env
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    restart: on-failure
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
     ports:
       - "5432:5432"
+
   bot:
     build:
       context: .
-      dockerfile: buildfiles/Dockerfile
-    command: /bin/bash -c "source venv/bin/activate && make migrate && python -m src.bot"
+      dockerfile: docker/bot.Dockerfile
+    command: /bin/bash -c "source venv/bin/activate && make migrate && python -m app"
     env_file:
       - .env
-    restart: always
-    ports:
-      - "8080:8080"
+    restart: unless-stopped
     depends_on:
       - db
       - redis
-  scheduler:
-    build:
-      context: .
-      dockerfile: buildfiles/Scheduler.Dockerfile
-    env_file:
-      - .env
-    restart: always
-    command: /bin/bash -c "source venv/bin/activate && arq src.scheduler.main.WorkerSettings"
-    depends_on:
-      - redis
-      - bot
 
 volumes:
-  pgdata:
-  pgadmin-data:
+  pg_data:
+  redis_data:

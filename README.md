@@ -22,7 +22,7 @@ Python3 • Aiogram3 • PostgreSQL • SQLAlchemy • Redis • Docker • NumP
 
 ## Сборка
 
-1. Создайте файл окружения ```.env```.
+1. Создайте файл окружения `.env`.
 ```
 BOT_MODE="docker"
 BOT_DEBUG=0
