@@ -1,44 +1,30 @@
-from typing import Any, Sequence
+import uuid
 
 import matplotlib.pyplot as plt
-import pandas as pd
-from sqlalchemy import Row, RowMapping, select
 
-from app.database.models import Task
-from app.tasks.constants import TASK_STATE_TRANSLATIONS, TASK_STATE_COLORS
-from app.bot.utils import DataVerifying
-from app.database import Database
+from app.config import settings
+from app.tasks.constants import TASK_STATUSES
+from app.tasks.schemas import TaskStatus
 
 
-async def get_data(db: Database, user_id: int) -> Sequence[Row | RowMapping | Any]:
-    async with db.session.begin():
-        stmt = select(Task.status).where(Task.user_id == user_id)
-        result = await db.session.execute(stmt)
-        return result.scalars().all()
+def paint_pie_plot(stats: dict[TaskStatus, int], *, title: str = "Total tasks: {count}") -> str:
+    # Разделяем классы и их количество для построения графика
+    class_names = [TASK_STATUSES[status]["text"] for status in stats.keys()]
+    class_values = list(stats.values())
 
+    # Получаем цвета
+    colors = [TASK_STATUSES[status]["color"] for status in stats.keys()]
 
-async def pie_plot(db: Database, user_id: int) -> str:
-    data = await get_data(db, user_id)
-    df = pd.DataFrame(data)
-    lst = df.value_counts().index.tolist()
-    class_names = [TASK_STATE_TRANSLATIONS[x[0]] for x in lst]
-    class_values = df.value_counts().values
-
-    colors = [TASK_STATE_COLORS[x[0]] for x in lst]
-
+    # Строим круговую диаграмму
     plt.figure()
     my_circle = plt.Circle((0, 0), 0.8, color="white")
-
-    # Create a pie chart of the filtered data
     plt.pie(class_values, labels=class_names, autopct="%.0f%%", colors=colors)
 
     p = plt.gcf()
     p.gca().add_artist(my_circle)
-    plt.title("Состояние прохождения тестов")
-
-    pie_id = DataVerifying.get_hash(str(user_id), DataVerifying.generate_salt())
-    plt.savefig(f"static/pie_{pie_id}.png")
-
+    plt.title(title.format(count=sum(class_values)))
+    pie_path = f"{settings.stats.stats_dir}/pie_{uuid.uuid4().hex}.png"
+    plt.savefig(pie_path)
     plt.close()
 
-    return f"static/pie_{pie_id}.png"
+    return pie_path

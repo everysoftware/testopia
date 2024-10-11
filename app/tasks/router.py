@@ -1,5 +1,10 @@
+import datetime
+import os
+
 from aiogram import Router, F, types
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.types import FSInputFile
 
 from app.checklists.dependencies import ChecklistServiceDep
 from app.checklists.states import ChecklistGroup
@@ -177,3 +182,24 @@ async def edit_comment(message: types.Message, state: FSMContext, checklist_serv
     await message.answer("Комментарий успешно обновлен!")
 
     await get(message, state, service, checklist_service, task_id=task_id)
+
+
+# STATS
+
+@router.message(Command("stats"))
+@router.message(F.text == "Статистика 📊")
+async def show(message: types.Message, user: MeDep, service: TaskServiceDep) -> None:
+    status_stats_path = await service.plot_by_statuses(user.id)
+    try:
+        await message.answer_photo(
+            photo=FSInputFile(status_stats_path), caption="Статистика за все время"
+        )
+    finally:
+        os.remove(status_stats_path)
+
+    now = datetime.datetime.now()
+    daily_stats_path = await service.plot_by_days(user.id, now, now - datetime.timedelta(days=365))
+    try:
+        await message.answer_photo(photo=FSInputFile(daily_stats_path), caption="Пройденные тесты за последний год")
+    finally:
+        os.remove(daily_stats_path)

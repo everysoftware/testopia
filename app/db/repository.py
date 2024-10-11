@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Any, Iterable, overload
 
-from sqlalchemy import select, Select
+from sqlalchemy import select, Select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base import BaseOrm
@@ -81,3 +81,12 @@ class AlchemyRepository[M: BaseOrm, S: BackendBase](BaseAlchemyRepository):
         stmt = self.build_pagination_query(params)
         result = await self.session.scalars(stmt)
         return self.validate_page(result)
+
+    async def create_many(
+            self,
+            *data: dict[str, Any],
+    ) -> None:
+        if not data:
+            return None
+        stmt = insert(self.model_type)
+        await self.session.execute(stmt, data)

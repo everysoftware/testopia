@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
@@ -19,6 +20,7 @@ async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
     await ping_redis()
     await register_admin()  # type: ignore[call-arg]
     await bot.set_my_commands(BOT_COMMANDS)
+    os.makedirs(settings.stats.stats_dir, exist_ok=True)
 
 
 async def on_shutdown(bot: Bot, dispatcher: Dispatcher) -> None:
