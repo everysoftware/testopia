@@ -1,18 +1,18 @@
 from typing import Callable, Dict, Any, Awaitable
 
-from aiogram import BaseMiddleware
+from aiogram import BaseMiddleware, Dispatcher
 from aiogram.dispatcher.event.handler import HandlerObject
 from aiogram.types import TelegramObject
 from fast_depends import inject as fast_inject
 
 
 def inject[T, ** P](func: Callable[P, T], **kwargs: Any) -> Callable[P, T]:
-    async def wrapper(*args: Any, **_kwargs: Any):
+    async def wrapper(*args: Any, **real_kwargs: Any):
         injected = fast_inject(func)
-        _kwargs |= kwargs
+        real_kwargs |= kwargs
         return await injected(
             *args,
-            **_kwargs,
+            **real_kwargs,
         )
 
     return wrapper
@@ -29,3 +29,8 @@ class DIMiddleware(BaseMiddleware):
         real_handler.callback = inject(real_handler.callback, **data)
         data["handler"] = real_handler
         return await handler(event, data)
+
+
+def setup_di(dp: Dispatcher) -> None:
+    dp.message.middleware(DIMiddleware())
+    dp.callback_query.middleware(DIMiddleware())

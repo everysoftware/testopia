@@ -1,3 +1,4 @@
+from aiogram.utils.formatting import Text, Bold
 from aiogram import Router, types
 from aiogram.filters import CommandStart, Command
 
@@ -32,13 +33,15 @@ async def start_command(message: types.Message, users: UserServiceDep) -> None:
 
 @router.message(Command("help"))
 async def get_help(message: types.Message) -> None:
-    await message.answer("<b>Способности бота:</b>\n\n" + BOT_COMMANDS_STR)
+    await message.answer("**Навигация по боту**:\n\n" + BOT_COMMANDS_STR)
 
 
 @router.message(Command("about"))
 async def about(message: types.Message) -> None:
-    authors = ["@ApexBis", "@Dmitry_Skarga", "@ivanstasevich", "@midnightknight"]
-    await message.answer(
-        "Бот разработан специально для всероссийского конкурса <b>Студент года. IT</b>!\n\n"
-        "👨‍💻: " + ", ".join(authors)
+    authors = ["@ivanstasevich", "@ApexBis", "@Dmitry_Skarga", "@midnightknight"]
+    text = Text(
+        "Бот разработан в рамках хакатона ",
+        Bold("Студент года IT 2023\n\n"),
+        "Команда: " + " ".join(authors)
     )
+    await message.answer(text.as_markdown())
