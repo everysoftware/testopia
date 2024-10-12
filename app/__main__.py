@@ -27,7 +27,11 @@ async def on_shutdown(bot: Bot, dispatcher: Dispatcher) -> None:
     pass
 
 
-storage = RedisStorage(redis=redis_client, state_ttl=settings.cache.state_ttl, data_ttl=settings.cache.data_ttl)
+storage = RedisStorage(
+    redis=redis_client,
+    state_ttl=settings.cache.state_ttl,
+    data_ttl=settings.cache.data_ttl,
+)
 dp = Dispatcher(storage=storage)
 setup_di(dp)
 dp.include_router(main_router)

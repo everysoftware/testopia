@@ -7,7 +7,9 @@ from app.service import Service
 
 
 class DeviceService(Service):
-    async def get_many(self, params: PageParams, *, user_id: ID | None = None) -> Page[DeviceRead]:
+    async def get_many(
+        self, params: PageParams, *, user_id: ID | None = None
+    ) -> Page[DeviceRead]:
         return await self.uow.devices.get_many(params, user_id=user_id)
 
     async def create(self, **kwargs: Any) -> DeviceRead:

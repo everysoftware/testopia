@@ -17,5 +17,4 @@ def get_checklist_kb(checklists: Page[ChecklistRead]) -> InlineKeyboardMarkup:
     builder.row(
         InlineKeyboardButton(text="Создать ➕", callback_data="add"),
     )
-    builder.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back"))
     return builder.as_markup(resize_keyboard=True)

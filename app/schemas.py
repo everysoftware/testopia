@@ -1,5 +1,8 @@
 from pydantic import BaseModel, ConfigDict
-from pydantic_settings import BaseSettings as PydanticBaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings as PydanticBaseSettings,
+    SettingsConfigDict,
+)
 
 
 class BackendBase(BaseModel):

@@ -11,7 +11,9 @@ class DeviceRepository(AlchemyRepository[DeviceOrm, DeviceRead]):
     model_type = DeviceOrm
     schema_type = DeviceRead
 
-    async def get_many(self, params: PageParams, *, user_id: ID | None = None) -> Page[DeviceRead]:  # type: ignore
+    async def get_many(
+        self, params: PageParams, *, user_id: ID | None = None
+    ) -> Page[DeviceRead]:  # noqa
         stmt = select(self.model_type)
         if user_id is not None:
             stmt = stmt.where(self.model_type.user_id == user_id)

@@ -22,21 +22,26 @@ router = Router()
 
 
 # GET MANY
+@router.callback_query(F.data == "to_checklist")
 @router.callback_query(F.data.startswith("show_"), ChecklistGroup.get_many)
 async def get_many(
-        event: types.CallbackQuery | types.Message,
-        state: FSMContext,
-        service: TaskServiceDep,
-        checklist_service: ChecklistServiceDep,
-        *,
-        checklist_id: ID | None = None
+    event: types.CallbackQuery | types.Message,
+    state: FSMContext,
+    service: TaskServiceDep,
+    checklist_service: ChecklistServiceDep,
+    *,
+    checklist_id: ID | None = None,
 ) -> None:
     if isinstance(event, types.CallbackQuery):
         message = event.message
-        checklist_id = int(event.data.split("_")[1])
+        if event.data.startswith("show_"):
+            checklist_id = int(event.data.split("_")[1])
+        else:
+            user_data = await state.get_data()
+            checklist_id = user_data["checklist_id"]
     else:
         message = event
-        assert checklist_id is not None
+    assert checklist_id is not None
 
     response = await service.get_many(checklist_id, PageParams(limit=100))
     kb = get_tasks_kb(response)
@@ -71,22 +76,32 @@ async def get_name(call: types.CallbackQuery, state: FSMContext) -> None:
 
 
 @router.message(TaskGroup.enter_name)
-async def create(message: types.Message, state: FSMContext, user: MeDep, service: TaskServiceDep,
-                 checklist_service: ChecklistServiceDep) -> None:
+async def create(
+    message: types.Message,
+    state: FSMContext,
+    user: MeDep,
+    service: TaskServiceDep,
+    checklist_service: ChecklistServiceDep,
+) -> None:
     user_data = await state.get_data()
     checklist_id = user_data["checklist_id"]
     name = message.text
     await service.create(checklist_id=checklist_id, user_id=user.id, name=name)
     await message.answer("Задача успешно создана!")
 
-    await get_many(message, state, service, checklist_service, checklist_id=checklist_id)
+    await get_many(
+        message, state, service, checklist_service, checklist_id=checklist_id
+    )
 
 
 # GET
 @router.callback_query(F.data.startswith("show_"), TaskGroup.get_many)
 async def get(
-        event: types.CallbackQuery | types.Message, state: FSMContext, service: TaskServiceDep,
-        checklist_service: ChecklistServiceDep, task_id: ID | None = None
+    event: types.CallbackQuery | types.Message,
+    state: FSMContext,
+    service: TaskServiceDep,
+    checklist_service: ChecklistServiceDep,
+    task_id: ID | None = None,
 ) -> None:
     if isinstance(event, types.CallbackQuery):
         message = event.message
@@ -123,16 +138,18 @@ async def get(
 # EDIT REPORT
 @router.callback_query(F.data == "report", TaskGroup.get)
 async def enter_url(call: types.CallbackQuery, state: FSMContext) -> None:
-    await call.message.answer(
-        "Введите ссылку на отчёт об ошибках", reply_markup=CANCEL_KB
-    )
+    await call.message.answer("Введите ссылку на отчёт об ошибках")
     await state.set_state(TaskGroup.enter_report_url)
     await call.answer()
 
 
 @router.message(TaskGroup.enter_report_url)
-async def edit_report(message: types.Message, state: FSMContext, checklist_service: ChecklistServiceDep,
-                      service: TaskServiceDep) -> None:
+async def edit_report(
+    message: types.Message,
+    state: FSMContext,
+    checklist_service: ChecklistServiceDep,
+    service: TaskServiceDep,
+) -> None:
     user_data = await state.get_data()
     task_id = user_data["task_id"]
     await service.update(task_id, report_url=message.text)
@@ -153,8 +170,10 @@ async def enter_status(call: types.CallbackQuery, state: FSMContext) -> None:
 
 @router.callback_query(F.data.startswith("set_"), TaskGroup.enter_status)
 async def edit_status(
-        call: types.CallbackQuery, state: FSMContext, checklist_service: ChecklistServiceDep,
-        service: TaskServiceDep
+    call: types.CallbackQuery,
+    state: FSMContext,
+    checklist_service: ChecklistServiceDep,
+    service: TaskServiceDep,
 ) -> None:
     new_status = call.data.split("_")[1]
     user_data = await state.get_data()
@@ -169,14 +188,18 @@ async def edit_status(
 # EDIT COMMENT
 @router.callback_query(F.data == "comment", TaskGroup.get)
 async def text(call: types.CallbackQuery, state: FSMContext) -> None:
-    await call.message.answer("Введите новый комментарий", reply_markup=CANCEL_KB)
+    await call.message.answer("Введите новый комментарий")
     await state.set_state(TaskGroup.enter_comment)
     await call.answer()
 
 
 @router.message(TaskGroup.enter_comment)
-async def edit_comment(message: types.Message, state: FSMContext, checklist_service: ChecklistServiceDep,
-                       service: TaskServiceDep) -> None:
+async def edit_comment(
+    message: types.Message,
+    state: FSMContext,
+    checklist_service: ChecklistServiceDep,
+    service: TaskServiceDep,
+) -> None:
     user_data = await state.get_data()
     task_id = user_data["task_id"]
     await service.update(task_id, comment=message.text)
@@ -187,20 +210,29 @@ async def edit_comment(message: types.Message, state: FSMContext, checklist_serv
 
 # STATS
 
+
 @router.message(Command("stats"))
 @router.message(F.text == "Статистика 📊")
-async def show(message: types.Message, user: MeDep, service: TaskServiceDep) -> None:
+async def show(
+    message: types.Message, user: MeDep, service: TaskServiceDep
+) -> None:
     status_stats_path = await service.plot_by_statuses(user.id)
     try:
         await message.answer_photo(
-            photo=FSInputFile(status_stats_path), caption="Статистика за все время"
+            photo=FSInputFile(status_stats_path),
+            caption="Статистика за все время",
         )
     finally:
         os.remove(status_stats_path)
 
     now = naive_utc()
-    daily_stats_path = await service.plot_by_days(user.id, now, now - datetime.timedelta(days=365))
+    daily_stats_path = await service.plot_by_days(
+        user.id, now, now - datetime.timedelta(days=365)
+    )
     try:
-        await message.answer_photo(photo=FSInputFile(daily_stats_path), caption="Пройденные тесты за последний год")
+        await message.answer_photo(
+            photo=FSInputFile(daily_stats_path),
+            caption="Пройденные тесты за последний год",
+        )
     finally:
         os.remove(daily_stats_path)

@@ -8,23 +8,25 @@ SHOW_DEVICE_KB = InlineKeyboardMarkup(
     inline_keyboard=[
         [
             InlineKeyboardButton(text="Удалить ❌", callback_data="delete"),
-            InlineKeyboardButton(text="Назад ⬅️", callback_data="delete"),
+            InlineKeyboardButton(text="Назад ⬅️", callback_data="to_devices"),
         ]
     ]
 )
 
 
 def get_devices_kb(
-        devices: Page[DeviceRead], selecting_mode: bool = False
+    devices: Page[DeviceRead], selecting_mode: bool = False
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for device in devices.items:
         builder.add(
-            InlineKeyboardButton(text=device.name, callback_data=f"select_{device.id}")
+            InlineKeyboardButton(
+                text=device.name, callback_data=f"select_{device.id}"
+            )
         )
     builder.adjust(1)
     if not selecting_mode:
-        builder.row(InlineKeyboardButton(text="Создать ➕", callback_data="add"))
-    if selecting_mode:
-        builder.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back"))
+        builder.row(
+            InlineKeyboardButton(text="Создать ➕", callback_data="add")
+        )
     return builder.as_markup(resize_keyboard=True)

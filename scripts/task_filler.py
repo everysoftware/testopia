@@ -12,23 +12,20 @@ from app.di import inject
 from app.tasks.schemas import TaskStatus
 
 
-def generate_timestamps(
-        number: int
-) -> Sequence[datetime.datetime]:
+def generate_timestamps(number: int) -> Sequence[datetime.datetime]:
     now = datetime.datetime.now()
-    timestamps = np.random.choice(pd.date_range(
-        start=now - datetime.timedelta(days=365), end=now, freq="D"
-    ), number)
+    timestamps = np.random.choice(
+        pd.date_range(
+            start=now - datetime.timedelta(days=365), end=now, freq="D"
+        ),
+        number,
+    )
     logging.info("Generated %d timestamps", number)
     return timestamps
 
 
-def generate_statuses(
-        number: int
-) -> Sequence[TaskStatus]:
-    statuses = np.random.choice(
-        list(TaskStatus), number
-    )
+def generate_statuses(number: int) -> Sequence[TaskStatus]:
+    statuses = np.random.choice(list(TaskStatus), number)
     logging.info("Generated %d statuses", number)
     return statuses
 
@@ -53,16 +50,13 @@ def get_df(user_id: ID, checklist_id: int, number: int) -> pd.DataFrame:
 
 @inject
 async def fill_tasks_table(
-        user_id: ID, checklist_id: int, number: int, uow: UOWDep
+    user_id: ID, checklist_id: int, number: int, uow: UOWDep
 ) -> None:
     df = get_df(user_id, checklist_id, number)
     conn = await uow.session.connection()
     await conn.run_sync(
         lambda sync_conn: df.to_sql(
-            "tasks",
-            con=sync_conn,
-            if_exists="append",
-            index=False
+            "tasks", con=sync_conn, if_exists="append", index=False
         ),
     )
     logging.info("Filled tasks table with %d tasks", number)
@@ -77,5 +71,5 @@ async def main() -> None:
     print("Done!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

@@ -51,18 +51,16 @@ class AlchemyRepository[M: BaseOrm, S: BackendBase](BaseAlchemyRepository):
 
     @overload
     def build_pagination_query[Q: Select[Any]](
-            self, params: PageParams, stmt: Q
-    ) -> Q:
-        ...
+        self, params: PageParams, stmt: Q
+    ) -> Q: ...
 
     @overload
     def build_pagination_query(
-            self, params: PageParams, stmt: None = None
-    ) -> Select[Any]:
-        ...
+        self, params: PageParams, stmt: None = None
+    ) -> Select[Any]: ...
 
     def build_pagination_query(
-            self, params: PageParams, stmt: Select[Any] | None = None
+        self, params: PageParams, stmt: Select[Any] | None = None
     ) -> Select[Any]:
         order_by = []
         for item in params.sort_params:
@@ -70,11 +68,15 @@ class AlchemyRepository[M: BaseOrm, S: BackendBase](BaseAlchemyRepository):
             order_by.append(attr.asc() if item.order == "asc" else attr.desc())
         if stmt is None:
             stmt = select(self.model_type)
-        stmt = stmt.limit(params.limit).offset(params.offset).order_by(*order_by)
+        stmt = (
+            stmt.limit(params.limit).offset(params.offset).order_by(*order_by)
+        )
         return stmt
 
     def validate_page(self, instances: Iterable[Any]) -> Page[S]:  # noqa
-        items = [self.schema_type.model_validate(instance) for instance in instances]
+        items = [
+            self.schema_type.model_validate(instance) for instance in instances
+        ]
         return Page(items=items)
 
     async def get_many(self, params: PageParams) -> Page[S]:  # noqa
@@ -83,8 +85,8 @@ class AlchemyRepository[M: BaseOrm, S: BackendBase](BaseAlchemyRepository):
         return self.validate_page(result)
 
     async def create_many(
-            self,
-            *data: dict[str, Any],
+        self,
+        *data: dict[str, Any],
     ) -> None:
         if not data:
             return None

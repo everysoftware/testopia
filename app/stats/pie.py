@@ -1,13 +1,16 @@
 import uuid
 
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 from app.config import settings
 from app.tasks.constants import TASK_STATUSES
 from app.tasks.schemas import TaskStatus
 
 
-def paint_pie_plot(stats: dict[TaskStatus, int], *, title: str = "Total tasks: {count}") -> str:
+def paint_pie_plot(
+    stats: dict[TaskStatus, int], *, title: str = "Total tasks: {count}"
+) -> str:
     # Разделяем классы и их количество для построения графика
     class_names = [TASK_STATUSES[status]["text"] for status in stats.keys()]
     class_values = list(stats.values())
@@ -17,7 +20,7 @@ def paint_pie_plot(stats: dict[TaskStatus, int], *, title: str = "Total tasks: {
 
     # Строим круговую диаграмму
     plt.figure()
-    my_circle = plt.Circle((0, 0), 0.8, color="white")
+    my_circle = patches.Circle((0, 0), 0.8, color="white")
     plt.pie(class_values, labels=class_names, autopct="%.0f%%", colors=colors)
 
     p = plt.gcf()

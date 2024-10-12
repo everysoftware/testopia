@@ -6,10 +6,12 @@ from aiogram.types import TelegramObject
 from fast_depends import inject as fast_inject
 
 
-def inject[T, ** P](func: Callable[P, T], **kwargs: Any) -> Callable[P, T]:
-    async def wrapper(*args: Any, **real_kwargs: Any):
+def inject[T, **P](
+    func: Callable[P, Awaitable[T]], **kwargs: Any
+) -> Callable[P, Awaitable[T]]:
+    async def wrapper(*args: P.args, **real_kwargs: P.kwargs) -> T:
         injected = fast_inject(func)
-        real_kwargs |= kwargs
+        real_kwargs |= kwargs  # type: ignore[assignment]
         return await injected(
             *args,
             **real_kwargs,
@@ -20,10 +22,10 @@ def inject[T, ** P](func: Callable[P, T], **kwargs: Any) -> Callable[P, T]:
 
 class DIMiddleware(BaseMiddleware):
     async def __call__(
-            self,
-            handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
-            event: TelegramObject,
-            data: Dict[str, Any],
+        self,
+        handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
+        data: Dict[str, Any],
     ) -> Any:
         real_handler: HandlerObject = data["handler"]
         real_handler.callback = inject(real_handler.callback, **data)

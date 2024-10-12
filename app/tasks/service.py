@@ -10,8 +10,12 @@ from app.tasks.schemas import TaskRead
 
 
 class TaskService(Service):
-    async def get_many(self, checklist_id: ID, params: PageParams) -> Page[TaskRead]:
-        return await self.uow.tasks.get_many_by_checklist(params, checklist_id=checklist_id)
+    async def get_many(
+        self, checklist_id: ID, params: PageParams
+    ) -> Page[TaskRead]:
+        return await self.uow.tasks.get_many_by_checklist(
+            params, checklist_id=checklist_id
+        )
 
     async def create(self, **kwargs: Any) -> TaskRead:
         return await self.uow.tasks.create(**kwargs)
@@ -26,6 +30,8 @@ class TaskService(Service):
         stats = await self.uow.tasks.get_status_stats(user_id)
         return paint_pie_plot(stats, title="Всего задач: {count}")
 
-    async def plot_by_days(self, user_id: ID, from_dt: datetime.datetime, to_dt: datetime.datetime) -> str:
+    async def plot_by_days(
+        self, user_id: ID, from_dt: datetime.datetime, to_dt: datetime.datetime
+    ) -> str:
         stats = await self.uow.tasks.get_date_stats(user_id, from_dt, to_dt)
         return paint_heat_map(stats, title="Всего выполненных: {count}")

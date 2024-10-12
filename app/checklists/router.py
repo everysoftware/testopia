@@ -11,11 +11,18 @@ from app.users.dependencies import MeDep
 router = Router()
 
 
+@router.callback_query(F.data == "to_checklists")
 @router.message(Command("checklists"))
 @router.message(F.text == "Мои чек-листы 📝")
 async def get_many(
-        message: types.Message, state: FSMContext, user: MeDep, service: ChecklistServiceDep
+    event: types.Message | types.CallbackQuery,
+    state: FSMContext,
+    user: MeDep,
+    service: ChecklistServiceDep,
 ) -> None:
+    message = (
+        event.message if isinstance(event, types.CallbackQuery) else event
+    )
     response = await service.get_many(PageParams(limit=100), user_id=user.id)
     kb = get_checklist_kb(response)
     if response.total > 0:
@@ -23,13 +30,13 @@ async def get_many(
     else:
         await message.answer("Нет чек-листов", reply_markup=kb)
     await state.set_state(ChecklistGroup.get_many)
+    if isinstance(event, types.CallbackQuery):
+        await event.answer()
 
 
 @router.callback_query(F.data == "add", ChecklistGroup.get_many)
 async def enter_name(call: types.CallbackQuery, state: FSMContext) -> None:
-    await call.message.answer(
-        "Назовите список задач. Например, `авторизация`"
-    )
+    await call.message.answer("Назовите список задач. Например, `авторизация`")
     await state.set_state(ChecklistGroup.enter_name)
     await call.answer()
 
@@ -37,14 +44,17 @@ async def enter_name(call: types.CallbackQuery, state: FSMContext) -> None:
 @router.message(ChecklistGroup.enter_name)
 async def enter_product(message: types.Message, state: FSMContext) -> None:
     await state.update_data(name=message.text)
-    await message.answer(
-        "Укажите продукт. Например, `VK Android App`"
-    )
+    await message.answer("Укажите продукт. Например, `VK Android App`")
     await state.set_state(ChecklistGroup.enter_product)
 
 
 @router.message(ChecklistGroup.enter_product)
-async def add(message: types.Message, state: FSMContext, user: MeDep, service: ChecklistServiceDep) -> None:
+async def add(
+    message: types.Message,
+    state: FSMContext,
+    user: MeDep,
+    service: ChecklistServiceDep,
+) -> None:
     user_data = await state.get_data()
     name = user_data["name"]
     product = message.text

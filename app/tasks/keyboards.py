@@ -29,13 +29,13 @@ SHOW_TASK_KB = InlineKeyboardMarkup(
             InlineKeyboardButton(text="🔗", callback_data="report"),
             InlineKeyboardButton(text="❌", callback_data="delete"),
         ],
-        [InlineKeyboardButton(text="Назад ⬅️", callback_data="back")],
+        [InlineKeyboardButton(text="Назад ⬅️", callback_data="to_checklist")],
     ]
 )
 
 
 def get_tasks_kb(
-        tasks: Page[TaskRead], *, action_btns: bool = True
+    tasks: Page[TaskRead], *, action_btns: bool = True
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for task in tasks.items:
@@ -47,8 +47,14 @@ def get_tasks_kb(
         )
     if action_btns:
         builder.row(
-            InlineKeyboardButton(text="Создать задачу ➕", callback_data="add"),
-            InlineKeyboardButton(text="Удалить чек-лист ❌", callback_data="delete"),
+            InlineKeyboardButton(
+                text="Создать задачу ➕", callback_data="add"
+            ),
+            InlineKeyboardButton(
+                text="Удалить чек-лист ❌", callback_data="delete"
+            ),
         )
-    builder.row(InlineKeyboardButton(text="Назад ⬅️", callback_data="back"))
+    builder.row(
+        InlineKeyboardButton(text="Назад ⬅️", callback_data="to_checklists")
+    )
     return builder.as_markup(resize_keyboard=True)

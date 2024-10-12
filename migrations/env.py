@@ -25,7 +25,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = BaseOrm.metadata
 
-config.set_main_option('sqlalchemy.url', settings.db.db_url)
+config.set_main_option("sqlalchemy.url", settings.db.db_url)
 
 
 # other values from the config, defined by the needs of env.py,

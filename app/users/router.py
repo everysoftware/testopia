@@ -38,10 +38,15 @@ async def get_help(message: types.Message) -> None:
 
 @router.message(Command("about"))
 async def about(message: types.Message) -> None:
-    authors = ["@ivanstasevich", "@ApexBis", "@Dmitry_Skarga", "@midnightknight"]
+    authors = [
+        "@ivanstasevich",
+        "@ApexBis",
+        "@Dmitry_Skarga",
+        "@midnightknight",
+    ]
     text = Text(
         "Бот разработан в рамках хакатона ",
         Bold("Студент года IT 2023\n\n"),
-        "Команда: " + " ".join(authors)
+        "Команда: " + " ".join(authors),
     )
     await message.answer(text.as_markdown())

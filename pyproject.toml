@@ -1,0 +1,22 @@
+[tool.ruff]
+fix = true
+indent-width = 4
+line-length = 79
+target-version = "py312"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+
+[tool.mypy]
+strict = true
+pretty = true
+plugins = "pydantic.mypy"
+disable_error_code = ["union-attr"]
+
+[[tool.mypy.overrides]]
+module = "*.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

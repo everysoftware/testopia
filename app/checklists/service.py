@@ -7,7 +7,9 @@ from app.service import Service
 
 
 class ChecklistService(Service):
-    async def get_many(self, params: PageParams, **kwargs: Any) -> Page[ChecklistRead]:
+    async def get_many(
+        self, params: PageParams, **kwargs: Any
+    ) -> Page[ChecklistRead]:
         return await self.uow.checklists.get_many(params, **kwargs)
 
     async def create(self, **kwargs: Any) -> ChecklistRead:
