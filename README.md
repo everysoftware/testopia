@@ -4,11 +4,11 @@
 
 Сделайте тестирование продуктов эффективнее с **Testopia**!
 
-<img src="/assets/onboarding.PNG" width="250" alt=""/>
-<img src="/assets/checklists.PNG" width="250" alt=""/>
+<img src="/assets/onboarding.PNG" width="300" alt=""/>
+<img src="/assets/checklists.PNG" width="300" alt=""/>
 
-<img src="/assets/task.PNG" width="250" alt=""/>
-<img src="/assets/stats.PNG" width="250" alt=""/>
+<img src="/assets/task.PNG" width="300" alt=""/>
+<img src="/assets/stats.PNG" width="300" alt=""/>
 
 
 ## Стек технологий
