@@ -5,6 +5,7 @@
 
 <img src="/assets/onboarding.PNG" width="300" />
 <img src="/assets/checklists.PNG" width="300" />
+
 <img src="/assets/task.PNG" width="300" />
 <img src="/assets/stats.PNG" width="300" />
 
