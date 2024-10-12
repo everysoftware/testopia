@@ -3,10 +3,10 @@
 Сделайте тестирование продуктов эффективнее с **Testopia**!
 [![Lint](https://github.com/everysoftware/testopia/actions/workflows/ci.yml/badge.svg)](https://github.com/everysoftware/testopia/actions/workflows/ci.yml)
 
-<img src="/assets/onboarding.PNG" width="250" />
-<img src="/assets/checklists.PNG" width="250" />
-<img src="/assets/stats.PNG" width="250" />
-<img src="/assets/task.PNG" width="250" />
+<img src="/assets/onboarding.PNG" width="300" />
+<img src="/assets/checklists.PNG" width="300" />
+<img src="/assets/task.PNG" width="300" />
+<img src="/assets/stats.PNG" width="300" />
 
 ## Стек технологий
 
