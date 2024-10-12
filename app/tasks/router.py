@@ -10,6 +10,7 @@ from app.checklists.dependencies import ChecklistServiceDep
 from app.checklists.states import ChecklistGroup
 from app.db.schemas import PageParams
 from app.db.types import ID
+from app.db.utils import naive_utc
 from app.keyboards import CANCEL_KB
 from app.tasks.constants import TASK_STATUSES
 from app.tasks.dependencies import TaskServiceDep
@@ -197,7 +198,7 @@ async def show(message: types.Message, user: MeDep, service: TaskServiceDep) -> 
     finally:
         os.remove(status_stats_path)
 
-    now = datetime.datetime.now()
+    now = naive_utc()
     daily_stats_path = await service.plot_by_days(user.id, now, now - datetime.timedelta(days=365))
     try:
         await message.answer_photo(photo=FSInputFile(daily_stats_path), caption="Пройденные тесты за последний год")
