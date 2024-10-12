@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import logging
+import random
 from typing import Sequence
 
 import numpy as np
@@ -9,14 +10,14 @@ import pandas as pd
 from app.db.dependencies import UOWDep
 from app.db.types import ID
 from app.di import inject
-from app.tasks.schemas import TaskStatus
+from app.tasks.schemas import TaskStatus, TestStatus
 
 
 def generate_timestamps(number: int) -> Sequence[datetime.datetime]:
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(datetime.UTC)
     timestamps = np.random.choice(
         pd.date_range(
-            start=now - datetime.timedelta(days=365), end=now, freq="D"
+            start=now - datetime.timedelta(days=365 - 30), end=now, freq="D"
         ),
         number,
     )
@@ -24,15 +25,34 @@ def generate_timestamps(number: int) -> Sequence[datetime.datetime]:
     return timestamps
 
 
-def generate_statuses(number: int) -> Sequence[TaskStatus]:
-    statuses = np.random.choice(list(TaskStatus), number)
-    logging.info("Generated %d statuses", number)
-    return statuses
+def get_test_status(passed_p: float) -> TestStatus:
+    if random.random() < passed_p:
+        return TestStatus.passed
+    return random.choice([s for s in TestStatus if s != TestStatus.passed])
+
+
+def generate_statuses(
+    number: int, *, done_p: float, test_p: float, passed_p: float
+) -> tuple[Sequence[TaskStatus], Sequence[TestStatus]]:
+    statuses = [TaskStatus.to_do for _ in range(number)]
+    test_statuses = [TestStatus.no_status for _ in range(number)]
+
+    done_count = int(number * done_p)
+    done_indices = random.sample(range(number), done_count)
+
+    for i in done_indices:
+        statuses[i] = TaskStatus.done
+        if random.random() < test_p:
+            test_statuses[i] = get_test_status(passed_p)
+    logging.info("Generated %d statuses (%d done)", number, done_count)
+    return statuses, test_statuses
 
 
 def get_df(user_id: ID, checklist_id: int, number: int) -> pd.DataFrame:
     timestamps = generate_timestamps(number)
-    statuses = generate_statuses(number)
+    statuses, test_statuses = generate_statuses(
+        number, done_p=0.9, test_p=0.8, passed_p=0.6
+    )
     df = pd.DataFrame(
         {
             "checklist_id": checklist_id,
@@ -41,6 +61,7 @@ def get_df(user_id: ID, checklist_id: int, number: int) -> pd.DataFrame:
             "created_at": timestamps,
             "updated_at": timestamps,
             "status": statuses,
+            "test_status": test_statuses,
         }
     )
     df["created_at"] = pd.to_datetime(df["created_at"])

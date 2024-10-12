@@ -6,6 +6,10 @@ run:
 	docker-compose up db redis -d --build
 	python -m app
 
+.PHONY: up
+up:
+	docker-compose up -d --build
+
 .PHONY: generate
 generate:
 	docker-compose up db redis -d --build

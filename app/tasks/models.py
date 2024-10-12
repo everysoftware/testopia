@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import BaseOrm
 from app.db.mixins import IDMixin, TimestampMixin
-from app.tasks.schemas import TaskStatus
+from app.tasks.schemas import TaskStatus, TestStatus
 
 
 class TaskOrm(BaseOrm, IDMixin, TimestampMixin):
@@ -16,6 +16,9 @@ class TaskOrm(BaseOrm, IDMixin, TimestampMixin):
         ForeignKey("checklists.id", ondelete="cascade")
     )
     name: Mapped[str]
-    status: Mapped[TaskStatus] = mapped_column(default=TaskStatus.skipped)
+    status: Mapped[TaskStatus] = mapped_column(default=TaskStatus.to_do)
+    test_status: Mapped[TestStatus] = mapped_column(
+        default=TestStatus.no_status
+    )
     report_url: Mapped[str | None]
     comment: Mapped[str | None]

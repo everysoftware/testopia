@@ -11,10 +11,15 @@ from app.checklists.states import ChecklistGroup
 from app.db.schemas import PageParams
 from app.db.types import ID
 from app.db.utils import naive_utc
-from app.keyboards import CANCEL_KB
-from app.tasks.constants import TASK_STATUSES
+from app.tasks.constants import TASK_STATUSES, TEST_STATUSES
 from app.tasks.dependencies import TaskServiceDep
-from app.tasks.keyboards import get_tasks_kb, SHOW_TASK_KB, EDIT_TASK_STATUS_KB
+from app.tasks.keyboards import (
+    get_tasks_kb,
+    SHOW_TASK_KB,
+    EDIT_TASK_STATUS_KB,
+    EDIT_TEST_STATUS_KB,
+)
+from app.tasks.schemas import TaskStatus, TestStatus
 from app.tasks.states import TaskGroup
 from app.users.dependencies import MeDep
 
@@ -23,7 +28,9 @@ router = Router()
 
 # GET MANY
 @router.callback_query(F.data == "to_checklist")
-@router.callback_query(F.data.startswith("show_"), ChecklistGroup.get_many)
+@router.callback_query(
+    F.data.startswith("show_checklist:"), ChecklistGroup.get_many
+)
 async def get_many(
     event: types.CallbackQuery | types.Message,
     state: FSMContext,
@@ -35,7 +42,7 @@ async def get_many(
     if isinstance(event, types.CallbackQuery):
         message = event.message
         if event.data.startswith("show_"):
-            checklist_id = int(event.data.split("_")[1])
+            checklist_id = int(event.data.split(":")[1])
         else:
             user_data = await state.get_data()
             checklist_id = user_data["checklist_id"]
@@ -68,8 +75,7 @@ async def get_many(
 @router.callback_query(F.data == "add", TaskGroup.get_many)
 async def get_name(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.message.answer(
-        "Назовите задачу. Например, `протестировать регистрацию`",
-        reply_markup=CANCEL_KB,
+        "Назовите задачу. Например, `протестировать регистрацию`"
     )
     await state.set_state(TaskGroup.enter_name)
     await call.answer()
@@ -95,7 +101,7 @@ async def create(
 
 
 # GET
-@router.callback_query(F.data.startswith("show_"), TaskGroup.get_many)
+@router.callback_query(F.data.startswith("show_task:"), TaskGroup.get_many)
 async def get(
     event: types.CallbackQuery | types.Message,
     state: FSMContext,
@@ -105,7 +111,7 @@ async def get(
 ) -> None:
     if isinstance(event, types.CallbackQuery):
         message = event.message
-        task_id = int(event.data.split("_")[1])
+        task_id = int(event.data.split(":")[1])
     else:
         message = event
         assert task_id is not None
@@ -121,11 +127,12 @@ async def get(
     await message.answer(
         f"📌 *Задача: {task.name}*\n\n"
         f"Статус: {TASK_STATUSES[task.status]["text"]} {TASK_STATUSES[task.status]["emoji"]}\n"
+        f"Тест: {TEST_STATUSES[task.test_status]["text"]} {TEST_STATUSES[task.test_status]["emoji"]}\n"
         f"Чек-лист: {checklist.name}\n"
-        f"Отчёт об ошибках: {report_url}\n"
+        f"Отчёт: {report_url}\n"
         f"Комментарий: {comment}\n"
-        f"Создана: {task.created_at}\n"
-        f"Изменена: {task.updated_at}",
+        f"Создано: {task.created_at}\n"
+        f"Изменено: {task.updated_at}",
         reply_markup=SHOW_TASK_KB,
     )
 
@@ -154,12 +161,11 @@ async def edit_report(
     task_id = user_data["task_id"]
     await service.update(task_id, report_url=message.text)
     await message.answer("Ссылка на отчёт об ошибках успешно обновлена!")
-
     await get(message, state, service, checklist_service, task_id=task_id)
 
 
 # EDIT STATUS
-@router.callback_query(F.data == "edit", TaskGroup.get)
+@router.callback_query(F.data == "edit_status", TaskGroup.get)
 async def enter_status(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.message.answer(
         "Выберите новый статус задачи", reply_markup=EDIT_TASK_STATUS_KB
@@ -168,20 +174,56 @@ async def enter_status(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.answer()
 
 
-@router.callback_query(F.data.startswith("set_"), TaskGroup.enter_status)
+@router.callback_query(
+    F.data.startswith("set_status:"), TaskGroup.enter_status
+)
 async def edit_status(
     call: types.CallbackQuery,
     state: FSMContext,
     checklist_service: ChecklistServiceDep,
     service: TaskServiceDep,
 ) -> None:
-    new_status = call.data.split("_")[1]
+    new_status = call.data.split(":")[1]
     user_data = await state.get_data()
     task_id = user_data["task_id"]
     await service.update(task_id, status=new_status)
     await call.message.answer("Статус задачи успешно изменен!")
     await get(call.message, state, service, checklist_service, task_id=task_id)
+    await call.answer()
 
+
+# EDIT TEST STATUS
+@router.callback_query(F.data == "edit_test_status", TaskGroup.get)
+async def enter_test_status(
+    call: types.CallbackQuery, state: FSMContext
+) -> None:
+    await call.message.answer(
+        "Выберите новый статус теста", reply_markup=EDIT_TEST_STATUS_KB
+    )
+    await state.set_state(TaskGroup.enter_status)
+    await call.answer()
+
+
+@router.callback_query(
+    F.data.startswith("set_test_status:"), TaskGroup.enter_status
+)
+async def edit_test_status(
+    call: types.CallbackQuery,
+    state: FSMContext,
+    checklist_service: ChecklistServiceDep,
+    service: TaskServiceDep,
+) -> None:
+    test_status = call.data.split(":")[1]
+    user_data = await state.get_data()
+    task_id = user_data["task_id"]
+    if test_status != TestStatus.no_status:
+        await service.update(
+            task_id, status=TaskStatus.done, test_status=test_status
+        )
+    else:
+        await service.update(task_id, test_status=test_status)
+    await call.message.answer("Статус теста успешно изменен!")
+    await get(call.message, state, service, checklist_service, task_id=task_id)
     await call.answer()
 
 
@@ -220,7 +262,7 @@ async def show(
     try:
         await message.answer_photo(
             photo=FSInputFile(status_stats_path),
-            caption="Статистика за все время",
+            caption="Состояние прохождения тестов",
         )
     finally:
         os.remove(status_stats_path)
@@ -232,7 +274,7 @@ async def show(
     try:
         await message.answer_photo(
             photo=FSInputFile(daily_stats_path),
-            caption="Пройденные тесты за последний год",
+            caption="Статистика по задачам",
         )
     finally:
         os.remove(daily_stats_path)

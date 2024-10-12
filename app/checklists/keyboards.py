@@ -10,7 +10,8 @@ def get_checklist_kb(checklists: Page[ChecklistRead]) -> InlineKeyboardMarkup:
     for checklist in checklists.items:
         builder.row(
             InlineKeyboardButton(
-                text=checklist.name, callback_data=f"show_{checklist.id}"
+                text=checklist.name,
+                callback_data=f"show_checklist:{checklist.id}",
             )
         )
     builder.adjust(1)

@@ -1,25 +1,52 @@
-from app.tasks.schemas import TaskStatus
+from app.tasks.schemas import TaskStatus, TestStatus
 
 TASK_STATUSES = {
-    TaskStatus.passed: {
+    TaskStatus.to_do: {
+        "emoji": "🔵",
+        "name": "to_do",
+        "text": "К выполнению",
+        "color": "mediumturquoise",
+    },
+    TaskStatus.in_progress: {
+        "emoji": "🟡",
+        "name": "in_progress",
+        "text": "Выполняется",
+        "color": "orange",
+    },
+    TaskStatus.done: {
+        "emoji": "🟢",
+        "name": "done",
+        "text": "Выполнено",
+        "color": "mediumseagreen",
+    },
+}
+
+TEST_STATUSES = {
+    TestStatus.no_status: {
+        "emoji": "⚪",
+        "name": "no_status",
+        "text": "Нет статуса",
+        "color": "mediumturquoise",
+    },
+    TestStatus.passed: {
         "emoji": "🟢",
         "name": "passed",
         "text": "Пройден",
         "color": "mediumseagreen",
     },
-    TaskStatus.failed: {
+    TestStatus.failed: {
         "emoji": "🔴",
         "name": "failed",
         "text": "Не пройден",
         "color": "lightcoral",
     },
-    TaskStatus.impossible: {
+    TestStatus.impossible: {
         "emoji": "🟡",
         "name": "impossible",
         "text": "Невозможно пройти",
         "color": "orange",
     },
-    TaskStatus.skipped: {
+    TestStatus.skipped: {
         "emoji": "🔵",
         "name": "skipped",
         "text": "Пропущен",
@@ -28,8 +55,15 @@ TASK_STATUSES = {
 }
 
 TASK_STATUS_CB_DATA = {
-    "passed": TaskStatus.passed,
-    "failed": TaskStatus.failed,
-    "impossible": TaskStatus.impossible,
-    "skipped": TaskStatus.skipped,
+    "to_do": TaskStatus.to_do,
+    "in_progress": TaskStatus.in_progress,
+    "done": TaskStatus.done,
+}
+
+TEST_STATUSES_CB_DATA = {
+    "passed": TestStatus.passed,
+    "failed": TestStatus.failed,
+    "impossible": TestStatus.impossible,
+    "skipped": TestStatus.skipped,
+    "no_status": TestStatus.no_status,
 }
