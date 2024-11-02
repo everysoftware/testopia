@@ -6,6 +6,7 @@ from typing import Sequence
 
 import numpy as np
 import pandas as pd
+from sqlalchemy import except_
 
 from app.db.dependencies import UOWDep
 from app.db.types import ID
@@ -83,11 +84,20 @@ async def fill_tasks_table(
     logging.info("Filled tasks table with %d tasks", number)
 
 
+
+def get_valid_integer(prompt: str) -> int:
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Please enter a valid integer.")
+
+
 async def main() -> None:
     logging.basicConfig(level=logging.INFO)
-    user_id = int(input("Enter user ID: "))
-    checklist_id = int(input("Enter checklist ID: "))
-    number = int(input("Enter number of tasks: "))
+    user_id = get_valid_integer("Enter user ID: ")
+    checklist_id = get_valid_integer("Enter checklist ID: ")
+    number = get_valid_integer("Enter number of tasks: ")
     await fill_tasks_table(user_id, checklist_id, number)  # type: ignore[call-arg]
     print("Done!")
 
