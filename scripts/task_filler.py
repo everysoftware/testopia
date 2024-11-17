@@ -6,7 +6,6 @@ from typing import Sequence
 
 import numpy as np
 import pandas as pd
-from sqlalchemy import except_
 
 from app.db.dependencies import UOWDep
 from app.db.types import ID
