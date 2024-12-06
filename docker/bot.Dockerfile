@@ -4,7 +4,7 @@ ENV DOCKER_MODE 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /app
+WORKDIR /opt/app
 
 COPY requirements.txt requirements.txt
 

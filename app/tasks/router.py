@@ -1,16 +1,11 @@
-import datetime
-import os
-
 from aiogram import Router, F, types
-from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import FSInputFile
 
+from app.bot import bot
 from app.checklists.dependencies import ChecklistServiceDep
 from app.checklists.states import ChecklistGroup
 from app.db.schemas import PageParams
 from app.db.types import ID
-from app.db.utils import naive_utc
 from app.tasks.constants import TASK_STATUSES, TEST_STATUSES
 from app.tasks.dependencies import TaskServiceDep
 from app.tasks.keyboards import (
@@ -22,6 +17,7 @@ from app.tasks.keyboards import (
 from app.tasks.schemas import TaskStatus, TestStatus
 from app.tasks.states import TaskGroup
 from app.users.dependencies import MeDep
+from app.utils import sanitize_markdown, split_message
 
 router = Router()
 
@@ -56,7 +52,7 @@ async def get_many(
 
     cap = (
         f"🗒 Чек-лист {checklist.name}\n\n"
-        f"Продукт: {checklist.product}\n"
+        f"Проект: {checklist.product}\n"
         f"Создан: {checklist.created_at}\n"
         f"Изменен: {checklist.updated_at}\n\n"
     )
@@ -118,19 +114,19 @@ async def get(
 
     task = await service.get_one(task_id)
     report_url = task.report_url if task.report_url else "нет"
-    comment = task.comment if task.comment else "нет"
+    desc = task.description if task.description else "нет"
 
     user_data = await state.get_data()
     checklist_id = user_data["checklist_id"]
     checklist = await checklist_service.get_one(checklist_id)
 
     await message.answer(
-        f"📌 *Задача: {task.name}*\n\n"
+        f"📌 Задача: *{task.name}*\n\n"
         f"Статус: {TASK_STATUSES[task.status]["text"]} {TASK_STATUSES[task.status]["emoji"]}\n"
+        f"Проект: {checklist.name}\n"
+        f"Описание: {desc}\n"
         f"Тест: {TEST_STATUSES[task.test_status]["text"]} {TEST_STATUSES[task.test_status]["emoji"]}\n"
-        f"Чек-лист: {checklist.name}\n"
         f"Отчёт: {report_url}\n"
-        f"Комментарий: {comment}\n"
         f"Создано: {task.created_at}\n"
         f"Изменено: {task.updated_at}",
         reply_markup=SHOW_TASK_KB,
@@ -244,37 +240,23 @@ async def edit_comment(
 ) -> None:
     user_data = await state.get_data()
     task_id = user_data["task_id"]
-    await service.update(task_id, comment=message.text)
+    await service.update(task_id, description=message.text)
     await message.answer("Комментарий успешно обновлен!")
 
     await get(message, state, service, checklist_service, task_id=task_id)
 
 
-# STATS
-
-
-@router.message(Command("stats"))
-@router.message(F.text == "Статистика 📊")
-async def show(
-    message: types.Message, user: MeDep, service: TaskServiceDep
+@router.callback_query(F.data == "complete", TaskGroup.get)
+async def solve(
+    call: types.CallbackQuery,
+    state: FSMContext,
+    service: TaskServiceDep,
 ) -> None:
-    status_stats_path = await service.plot_by_statuses(user.id)
-    try:
-        await message.answer_photo(
-            photo=FSInputFile(status_stats_path),
-            caption="Состояние прохождения тестов",
-        )
-    finally:
-        os.remove(status_stats_path)
-
-    now = naive_utc()
-    daily_stats_path = await service.plot_by_days(
-        user.id, now, now - datetime.timedelta(days=365)
-    )
-    try:
-        await message.answer_photo(
-            photo=FSInputFile(daily_stats_path),
-            caption="Статистика по задачам",
-        )
-    finally:
-        os.remove(daily_stats_path)
+    await call.answer()
+    await bot.send_chat_action(call.message.chat.id, "typing")
+    user_data = await state.get_data()
+    task_id = user_data["task_id"]
+    full_text = await service.solve(task_id)
+    full_text = sanitize_markdown(full_text)
+    for part in split_message(full_text):
+        await call.message.answer(part)

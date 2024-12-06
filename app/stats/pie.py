@@ -1,14 +1,15 @@
 import uuid
+from typing import Any
 
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 
 from app.config import settings
 from app.tasks.constants import TEST_STATUSES
 
 
 def paint_pie_plot(
-    stats: dict[TEST_STATUSES, int], *, title: str = "Total tasks: {count}"
+    stats: dict[Any, int], *, title: str = "Total tasks: {count}"
 ) -> str:
     # Разделяем классы и их количество для построения графика
     class_names = [TEST_STATUSES[status]["text"] for status in stats.keys()]

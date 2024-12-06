@@ -14,6 +14,8 @@ if not os.getenv("DOCKER_MODE"):
 
 class AppSettings(BaseSettings):
     bot_token: str
+    gigachat_client_id: str
+    gigachat_client_secret: str
 
     auth: AuthSettings = AuthSettings()
     db: DBSettings = DBSettings()

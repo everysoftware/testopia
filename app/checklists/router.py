@@ -44,7 +44,7 @@ async def enter_name(call: types.CallbackQuery, state: FSMContext) -> None:
 @router.message(ChecklistGroup.enter_name)
 async def enter_product(message: types.Message, state: FSMContext) -> None:
     await state.update_data(name=message.text)
-    await message.answer("Укажите продукт. Например, `VK Android App`")
+    await message.answer("Укажите проект. Например, `VK Android App`")
     await state.set_state(ChecklistGroup.enter_product)
 
 

@@ -32,6 +32,9 @@ SHOW_TASK_KB = InlineKeyboardMarkup(
             InlineKeyboardButton(text="✏️", callback_data="edit_status"),
             InlineKeyboardButton(text="🧪", callback_data="edit_test_status"),
             InlineKeyboardButton(text="💬", callback_data="comment"),
+        ],
+        [
+            InlineKeyboardButton(text="✨", callback_data="complete"),
             InlineKeyboardButton(text="🔗", callback_data="report"),
             InlineKeyboardButton(text="❌", callback_data="delete"),
         ],

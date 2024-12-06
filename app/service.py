@@ -1,11 +1,10 @@
 from abc import ABC
 
+from app.ai.dependencies import AIDep
 from app.db.dependencies import UOWDep
-from app.db.uow import UOW
 
 
 class Service(ABC):
-    uow: UOW
-
-    def __init__(self, uow: UOWDep):
+    def __init__(self, uow: UOWDep, ai: AIDep) -> None:
         self.uow = uow
+        self.ai = ai

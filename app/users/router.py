@@ -1,4 +1,3 @@
-from aiogram.utils.formatting import Text, Bold
 from aiogram import Router, types
 from aiogram.filters import CommandStart, Command
 
@@ -38,15 +37,9 @@ async def get_help(message: types.Message) -> None:
 
 @router.message(Command("about"))
 async def about(message: types.Message) -> None:
-    authors = [
-        "@ivanstasevich",
-        "@ApexBis",
-        "@Dmitry_Skarga",
-        "@midnightknight",
-    ]
-    text = Text(
-        "Бот разработан в рамках хакатона ",
-        Bold("Студент года IT 2023\n\n"),
-        "Команда: " + " ".join(authors),
+    text = (
+        "**Testopia** - мощный инструмент для ведения проектов.\n\n"
+        "Поддерживает управление проектами, задачами и тестами.\n\n"
+        "Используйте команду /help для получения списка доступных команд."
     )
-    await message.answer(text.as_markdown())
+    await message.answer(text)

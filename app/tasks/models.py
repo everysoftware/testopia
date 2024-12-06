@@ -16,9 +16,9 @@ class TaskOrm(BaseOrm, IDMixin, TimestampMixin):
         ForeignKey("checklists.id", ondelete="cascade")
     )
     name: Mapped[str]
+    description: Mapped[str | None]
     status: Mapped[TaskStatus] = mapped_column(default=TaskStatus.to_do)
     test_status: Mapped[TestStatus] = mapped_column(
         default=TestStatus.no_status
     )
     report_url: Mapped[str | None]
-    comment: Mapped[str | None]

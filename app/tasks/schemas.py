@@ -24,5 +24,5 @@ class TaskRead(IDModel, TimestampModel):
     name: str
     status: TaskStatus
     test_status: TestStatus
+    description: str | None
     report_url: str | None
-    comment: str | None
