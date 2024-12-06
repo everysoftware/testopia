@@ -7,11 +7,9 @@
 Testopia представляет собой мощный инструмент для управления задачами, который составляет для вас статистику
 продуктивности и предлагает решения задач на основе ИИ.
 
-<img src="/assets/onboarding.jpg" width="300" alt=""/>
-<img src="/assets/checklists.PNG" width="300" alt=""/>
+<img src="/assets/onboarding.jpg" width="300" alt=""/><img src="/assets/checklists.PNG" width="300" alt=""/>
 
-<img src="/assets/task.jpg" width="300" alt=""/>
-<img src="/assets/solution.jpg" width="300" alt=""/>
+<img src="/assets/task.jpg" width="300" alt=""/><img src="/assets/solution.jpg" width="300" alt=""/>
 
 <img src="/assets/stats.PNG" width="300" alt=""/>
 
