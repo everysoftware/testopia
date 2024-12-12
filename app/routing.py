@@ -5,6 +5,7 @@ from app.checklists.router import router as checklists_router
 from app.tasks.router import router as tasks_router
 from app.devices.router import router as devices_router
 from app.stats.router import router as stats_router
+from app.voice.router import router as voice_router
 
 routers = [
     start_router,
@@ -12,6 +13,7 @@ routers = [
     tasks_router,
     devices_router,
     stats_router,
+    voice_router,
 ]
 
 main_router = Router()
