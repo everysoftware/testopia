@@ -2,6 +2,6 @@ from typing import Annotated
 
 from fast_depends import Depends
 
-from app.stats.service import StatsService
+from app.stats.service import StatsUseCases
 
-StatsServiceDep = Annotated[StatsService, Depends(StatsService)]
+StatsServiceDep = Annotated[StatsUseCases, Depends(StatsUseCases)]

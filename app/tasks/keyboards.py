@@ -3,9 +3,7 @@ from typing import Any
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from app.db.schemas import Page
 from app.tasks.constants import TASK_STATUSES, TEST_STATUSES
-from app.tasks.schemas import TaskRead
 
 
 def get_status_kb(
@@ -38,32 +36,6 @@ SHOW_TASK_KB = InlineKeyboardMarkup(
             InlineKeyboardButton(text="🔗", callback_data="report"),
             InlineKeyboardButton(text="❌", callback_data="delete"),
         ],
-        [InlineKeyboardButton(text="Назад ⬅️", callback_data="to_checklist")],
+        [InlineKeyboardButton(text="Назад ⬅️", callback_data="to_project")],
     ]
 )
-
-
-def get_tasks_kb(
-    tasks: Page[TaskRead], *, action_btns: bool = True
-) -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    for task in tasks.items:
-        builder.row(
-            InlineKeyboardButton(
-                text=f"{task.name} {TASK_STATUSES[task.status]['emoji']}",
-                callback_data=f"show_task:{task.id}",
-            )
-        )
-    if action_btns:
-        builder.row(
-            InlineKeyboardButton(
-                text="Создать задачу ➕", callback_data="add"
-            ),
-            InlineKeyboardButton(
-                text="Удалить чек-лист ❌", callback_data="delete"
-            ),
-        )
-    builder.row(
-        InlineKeyboardButton(text="Назад ⬅️", callback_data="to_checklists")
-    )
-    return builder.as_markup(resize_keyboard=True)

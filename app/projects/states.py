@@ -1,8 +1,8 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class ChecklistGroup(StatesGroup):
+class ProjectGroup(StatesGroup):
     get_many = State()
     enter_name = State()
-    enter_product = State()
+    select_project = State()
     get = State()

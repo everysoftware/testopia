@@ -5,22 +5,20 @@ import os
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 
+from app.cache.config import cache_settings
 from app.cache.connection import redis_client
 from app.cache.lifespan import ping_redis
 from app.commands import BOT_COMMANDS
-from app.config import settings
 from app.di import setup_di
 from app.routing import main_router
-from app.users.lifespan import register_admin
-
+from app.stats.config import stats_settings
 from .bot import bot as tg_bot
 
 
 async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
     await ping_redis()
-    await register_admin()  # type: ignore[call-arg]
     await bot.set_my_commands(BOT_COMMANDS)
-    os.makedirs(settings.stats.stats_dir, exist_ok=True)
+    os.makedirs(stats_settings.stats_dir, exist_ok=True)
 
 
 async def on_shutdown(bot: Bot, dispatcher: Dispatcher) -> None:
@@ -29,8 +27,8 @@ async def on_shutdown(bot: Bot, dispatcher: Dispatcher) -> None:
 
 storage = RedisStorage(
     redis=redis_client,
-    state_ttl=settings.cache.state_ttl,
-    data_ttl=settings.cache.data_ttl,
+    state_ttl=cache_settings.state_ttl,
+    data_ttl=cache_settings.data_ttl,
 )
 dp = Dispatcher(storage=storage)
 setup_di(dp)

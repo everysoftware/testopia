@@ -6,11 +6,12 @@ from aiogram.types import (
 MAIN_MENU_KB = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Мои чек-листы 📝"),
-            KeyboardButton(text="Мои устройства 📱"),
+            KeyboardButton(text="Мои задачи 📝"),
+            KeyboardButton(text="Мои пространства 📦"),
         ],
         [
             KeyboardButton(text="Статистика 📊"),
+            KeyboardButton(text="Помощь 🆘"),
         ],
     ],
     resize_keyboard=True,

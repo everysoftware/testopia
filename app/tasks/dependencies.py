@@ -2,6 +2,6 @@ from typing import Annotated
 
 from fast_depends import Depends
 
-from app.tasks.service import TaskService
+from app.tasks.service import TaskUseCases
 
-TaskServiceDep = Annotated[TaskService, Depends(TaskService)]
+TaskServiceDep = Annotated[TaskUseCases, Depends(TaskUseCases)]

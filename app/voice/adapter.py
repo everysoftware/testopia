@@ -20,4 +20,4 @@ def stt(wav_path: str) -> str:
         audio_data = recognizer.record(source)
         text_json = recognizer.recognize_vosk(audio_data, language="russian")
         text = json.loads(text_json)["text"]
-        return text
+        return text  # type: ignore[no-any-return]

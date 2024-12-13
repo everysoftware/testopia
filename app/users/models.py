@@ -1,11 +1,20 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Boolean
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from app.db.base import BaseOrm
-from app.db.mixins import TimestampMixin, IDMixin
+from app.base.models import Entity
+
+if TYPE_CHECKING:
+    from app.tasks.models import Task
+    from app.projects.models import Project
+    from app.workspaces.models import Workspace
 
 
-class UserOrm(BaseOrm, IDMixin, TimestampMixin):
+class User(Entity):
     __tablename__ = "users"
 
     first_name: Mapped[str | None]
@@ -13,3 +22,18 @@ class UserOrm(BaseOrm, IDMixin, TimestampMixin):
     telegram_id: Mapped[int] = mapped_column(index=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    workspaces: Mapped[list[Workspace]] = relationship(back_populates="user")
+    projects: Mapped[list[Project]] = relationship(back_populates="user")
+    tasks: Mapped[list[Task]] = relationship(back_populates="user")
+
+    @hybrid_property
+    def display_name(self) -> str:
+        if self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        if self.first_name:
+            return self.first_name
+        return ""
+
+    def grant_superuser(self) -> None:
+        self.is_superuser = True

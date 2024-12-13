@@ -2,20 +2,34 @@ import logging
 import os
 
 from aiogram import Router, types, F
+from aiogram.fsm.context import FSMContext
 
 from app.bot import bot
-from app.voice.adapter import ogg_to_wav, stt
+from app.projects import router as checklists_router
+from app.projects.dependencies import ProjectServiceDep
+from app.tasks import router as tasks_router
+from app.tasks.dependencies import TaskServiceDep
+from app.users.dependencies import UserDep
+from app.voice.dependencies import VoiceServiceDep
+from app.voice.schemas import VoiceCommand
 
 router = Router()
 
 
 @router.message(F.content_type == types.ContentType.VOICE)
-async def handle_voice_message(message: types.Message) -> None:
+async def handle_voice_message(
+    message: types.Message,
+    user: UserDep,
+    service: VoiceServiceDep,
+    state: FSMContext,
+    tasks: TaskServiceDep,
+    checklists: ProjectServiceDep,
+) -> None:
     ogg_path = f"temp/voice_{message.from_user.id}.ogg"
-    wav_path = f"temp/voice_{message.from_user.id}.wav"
     try:
         try:
             file = await bot.get_file(message.voice.file_id)
+            assert file.file_path is not None
             await bot.download_file(file.file_path, ogg_path)
         except Exception as e:
             await message.reply(
@@ -23,37 +37,18 @@ async def handle_voice_message(message: types.Message) -> None:
             )
             logging.info("Error: %s", e)
             raise
-
-        try:
-            wav_path = ogg_to_wav(ogg_path, wav_path)
-        except Exception as e:
-            await message.reply(
-                "Произошла ошибка при конвертации голосового сообщения"
-            )
-            logging.info("Error: %s", e)
-            raise
-
-        try:
-            text = stt(wav_path)
-        except Exception as e:
-            await message.reply("Произошла ошибка при распознавании речи")
-            logging.info("Error: %s", e)
-            raise
-
-        lower_text = text.lower()
-
-        if "создай задачу" in lower_text:
-            task_name = lower_text.replace("создай задачу", "").strip()
-            reply = f"Задача '{task_name}' создана!"
-        elif "покажи задачи" in lower_text:
-            reply = "Вот список ваших задач: \n1. Обновить документацию \n2. Проверить баги"
-        else:
-            reply = f"Я распознал ваш запрос: '{text}', но не понял, что с ним делать."
-
-        await message.answer(reply)
+        response = await service.help(user, state, ogg_path)
+        match response.cmd:
+            case VoiceCommand.create_task:
+                await message.answer("Задача успешно создана!")
+                await tasks_router.get(message, state, tasks, checklists)
+            case VoiceCommand.show_tasks:
+                await checklists_router.get(message, state, tasks, checklists)
+            case VoiceCommand.unknown:
+                await message.answer(
+                    f"Я распознал ваш запрос: '{response.speech_text}', но не понял, что с ним делать."
+                )
 
     finally:
         if os.path.exists(ogg_path):
             os.remove(ogg_path)
-        if os.path.exists(wav_path):
-            os.remove(wav_path)

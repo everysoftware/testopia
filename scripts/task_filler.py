@@ -7,8 +7,8 @@ from typing import Sequence
 import numpy as np
 import pandas as pd
 
+from app.base.types import UUID
 from app.db.dependencies import UOWDep
-from app.db.types import ID
 from app.di import inject
 from app.tasks.schemas import TaskStatus, TestStatus
 
@@ -48,7 +48,7 @@ def generate_statuses(
     return statuses, test_statuses
 
 
-def get_df(user_id: ID, checklist_id: int, number: int) -> pd.DataFrame:
+def get_df(user_id: UUID, checklist_id: int, number: int) -> pd.DataFrame:
     timestamps = generate_timestamps(number)
     statuses, test_statuses = generate_statuses(
         number, done_p=0.9, test_p=0.8, passed_p=0.6
@@ -71,7 +71,7 @@ def get_df(user_id: ID, checklist_id: int, number: int) -> pd.DataFrame:
 
 @inject
 async def fill_tasks_table(
-    user_id: ID, checklist_id: int, number: int, uow: UOWDep
+    user_id: UUID, checklist_id: int, number: int, uow: UOWDep
 ) -> None:
     df = get_df(user_id, checklist_id, number)
     conn = await uow.session.connection()
@@ -81,7 +81,6 @@ async def fill_tasks_table(
         ),
     )
     logging.info("Filled tasks table with %d tasks", number)
-
 
 
 def get_valid_integer(prompt: str) -> int:

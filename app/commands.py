@@ -2,8 +2,8 @@ from aiogram.types import BotCommand
 
 BOT_COMMAND_LIST = (
     ("start", "Запустить бота"),
-    ("checklists", "Мои чек-листы"),
-    ("devices", "Мои устройства"),
+    ("projects", "Мои проекты"),
+    ("workspaces", "Мои пространства"),
     ("stats", "Моя статистика"),
     ("help", "Помощь"),
     ("about", "О боте"),

@@ -1,19 +1,31 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from __future__ import annotations
 
-from app.db.base import BaseOrm
-from app.db.mixins import IDMixin, TimestampMixin
+from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.base.models import Entity
+from app.base.types import UUID
 from app.tasks.schemas import TaskStatus, TestStatus
 
+if TYPE_CHECKING:
+    from app.projects.models import Project
+    from app.users.models import User
+    from app.workspaces.models import Workspace
 
-class TaskOrm(BaseOrm, IDMixin, TimestampMixin):
+
+class Task(Entity):
     __tablename__ = "tasks"
 
-    user_id: Mapped[int] = mapped_column(
+    user_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id", ondelete="cascade")
     )
-    checklist_id: Mapped[int] = mapped_column(
-        ForeignKey("checklists.id", ondelete="cascade")
+    workspace_id: Mapped[UUID] = mapped_column(
+        ForeignKey("workspaces.id", ondelete="cascade")
+    )
+    project_id: Mapped[UUID] = mapped_column(
+        ForeignKey("projects.id", ondelete="cascade")
     )
     name: Mapped[str]
     description: Mapped[str | None]
@@ -22,3 +34,7 @@ class TaskOrm(BaseOrm, IDMixin, TimestampMixin):
         default=TestStatus.no_status
     )
     report_url: Mapped[str | None]
+
+    user: Mapped[User] = relationship(back_populates="tasks")
+    workspace: Mapped[Workspace] = relationship(back_populates="tasks")
+    project: Mapped[Project] = relationship(back_populates="tasks")

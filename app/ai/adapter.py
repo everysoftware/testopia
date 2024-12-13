@@ -61,11 +61,6 @@ class AIAdapter:
             answer = data["choices"][0]["message"]["content"]
             return answer  # type: ignore[no-any-return]
 
-    async def complete_solution(self, task_name: str, task_desc: str) -> str:
-        return await self.complete(
-            f"Task: {task_name}. Description: {task_desc}. Solve the task"
-        )
-
     async def __aenter__(self) -> None:
         self._client = aiohttp.ClientSession()
         await self._client.__aenter__()

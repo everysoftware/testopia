@@ -7,7 +7,7 @@ from aiogram.types import FSInputFile
 
 from app.db.utils import naive_utc
 from app.stats.dependencies import StatsServiceDep
-from app.users.dependencies import MeDep
+from app.users.dependencies import UserDep
 
 router = Router()
 
@@ -17,7 +17,7 @@ router = Router()
 @router.message(Command("stats"))
 @router.message(F.text == "Статистика 📊")
 async def show(
-    message: types.Message, user: MeDep, service: StatsServiceDep
+    message: types.Message, user: UserDep, service: StatsServiceDep
 ) -> None:
     status_stats_path = await service.plot_by_statuses(user.id)
     try:

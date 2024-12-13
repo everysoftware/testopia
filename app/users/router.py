@@ -1,9 +1,10 @@
-from aiogram import Router, types
+from aiogram import Router, types, F
 from aiogram.filters import CommandStart, Command
 
 from app.commands import BOT_COMMANDS_STR
 from app.users.dependencies import UserServiceDep
 from app.users.keyboards import MAIN_MENU_KB
+from app.users.schemas import UserCreate
 
 router = Router()
 
@@ -18,11 +19,12 @@ async def start_command(message: types.Message, users: UserServiceDep) -> None:
             reply_markup=MAIN_MENU_KB,
         )
     else:
-        user = await users.register(
+        data = UserCreate(
             telegram_id=message.from_user.id,
             first_name=message.from_user.first_name,
             last_name=message.from_user.last_name,
         )
+        user = await users.register(data)
         await message.answer(
             f"Добро пожаловать, {user.display_name}! "
             "Я помогаю тестировщикам организовывать задачи проекта. Давай приступим к работе! 😊",
@@ -31,6 +33,7 @@ async def start_command(message: types.Message, users: UserServiceDep) -> None:
 
 
 @router.message(Command("help"))
+@router.message(F.text == "Помощь 🆘")
 async def get_help(message: types.Message) -> None:
     await message.answer("**Навигация по боту**:\n\n" + BOT_COMMANDS_STR)
 

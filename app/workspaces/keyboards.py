@@ -1,31 +1,31 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from app.db.schemas import Page
-from app.devices.schemas import DeviceRead
+from app.base.pagination import Page
+from app.workspaces.models import Workspace
 
-SHOW_DEVICE_KB = InlineKeyboardMarkup(
+SHOW_WORKSPACE_KB = InlineKeyboardMarkup(
     inline_keyboard=[
         [
             InlineKeyboardButton(text="Удалить ❌", callback_data="delete"),
-            InlineKeyboardButton(text="Назад ⬅️", callback_data="to_devices"),
+            InlineKeyboardButton(
+                text="Назад ⬅️", callback_data="to_workspaces"
+            ),
         ]
     ]
 )
 
 
-def get_devices_kb(
-    devices: Page[DeviceRead], selecting_mode: bool = False
+def get_workspace_kb(
+    page: Page[Workspace], *, action_btns: bool = True
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    for device in devices.items:
+    for i in page.items:
         builder.add(
-            InlineKeyboardButton(
-                text=device.name, callback_data=f"select_{device.id}"
-            )
+            InlineKeyboardButton(text=i.name, callback_data=f"select_{i.id}")
         )
     builder.adjust(1)
-    if not selecting_mode:
+    if action_btns:
         builder.row(
             InlineKeyboardButton(text="Создать ➕", callback_data="add")
         )

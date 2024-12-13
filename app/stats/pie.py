@@ -4,7 +4,7 @@ from typing import Any
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 
-from app.config import settings
+from app.stats.config import stats_settings
 from app.tasks.constants import TEST_STATUSES
 
 
@@ -26,7 +26,7 @@ def paint_pie_plot(
     p = plt.gcf()
     p.gca().add_artist(my_circle)
     plt.title(title.format(count=sum(class_values)))
-    pie_path = f"{settings.stats.stats_dir}/pie_{uuid.uuid4().hex}.png"
+    pie_path = f"{stats_settings.stats_dir}/pie_{uuid.uuid4().hex}.png"
     plt.savefig(pie_path)
     plt.close()
 

@@ -1,17 +1,18 @@
-from sqlalchemy import select
+from dataclasses import dataclass
+from typing import Any
 
-from app.db.repository import AlchemyRepository
-from app.users.models import UserOrm
-from app.users.schemas import UserRead
+from app.base.specification import ISpecification
+from app.db.repository import SQLAlchemyRepository
+from app.users.models import User
 
 
-class UserRepository(AlchemyRepository[UserOrm, UserRead]):
-    model_type = UserOrm
-    schema_type = UserRead
+class UserRepository(SQLAlchemyRepository[User]):
+    model_type = User
 
-    async def get_by_telegram_id(self, telegram_id: int) -> UserRead | None:
-        stmt = select(UserOrm).where(UserOrm.telegram_id == telegram_id)  # noqa
-        result = await self.session.scalar(stmt)
-        if result is None:
-            return None
-        return self.schema_type.model_validate(result)
+
+@dataclass
+class TelegramUserSpecification(ISpecification):
+    telegram_id: int
+
+    def apply(self, stmt: Any) -> Any:
+        return stmt.where(User.telegram_id == self.telegram_id)

@@ -1,45 +1,32 @@
 import datetime
+from dataclasses import dataclass
+from typing import Any
 
 from sqlalchemy import select, func
 
-from app.db.repository import AlchemyRepository
-from app.db.schemas import PageParams, Page
-from app.db.types import ID
-from app.tasks.models import TaskOrm
-from app.tasks.schemas import TaskRead, TaskStatus, TestStatus
+from app.base.specification import ISpecification
+from app.base.types import UUID
+from app.db.repository import SQLAlchemyRepository
+from app.tasks.models import Task
+from app.tasks.schemas import TaskStatus, TestStatus
 
 
-class TaskRepository(AlchemyRepository[TaskOrm, TaskRead]):
-    model_type = TaskOrm
-    schema_type = TaskRead
+@dataclass
+class ProjectTaskSpecification(ISpecification):
+    checklist_id: UUID
 
-    async def get_many_by_checklist(
-        self, params: PageParams, *, checklist_id: ID
-    ) -> Page[TaskRead]:
-        stmt = select(self.model_type).where(
-            self.model_type.checklist_id == checklist_id
-        )
-        stmt = self.build_pagination_query(params, stmt)
-        result = await self.session.scalars(stmt)
-        return self.validate_page(result)
+    def apply(self, stmt: Any) -> Any:
+        return stmt.where(Task.project_id == self.checklist_id)
 
-    async def get_test_stats(self, user_id: ID) -> dict[TestStatus, int]:
-        stmt = (
-            select(
-                self.model_type.test_status,
-                func.count(self.model_type.test_status),
-            )
-            .where(
-                self.model_type.user_id == user_id,
-                self.model_type.test_status != TestStatus.no_status,
-            )
-            .group_by(self.model_type.test_status)
-        )
-        result = await self.session.execute(stmt)
-        return {status: count for status, count in result.all()}
 
-    async def get_stats(
-        self, user_id: ID, from_dt: datetime.datetime, to_dt: datetime.datetime
+class TaskRepository(SQLAlchemyRepository[Task]):
+    model_type = Task
+
+    async def get_task_stats(
+        self,
+        user_id: UUID,
+        from_dt: datetime.datetime,
+        to_dt: datetime.datetime,
     ) -> dict[datetime.datetime, int]:
         # Запрос на получение количества выполненных задач по дням за последний год
         stmt = (
@@ -63,3 +50,18 @@ class TaskRepository(AlchemyRepository[TaskOrm, TaskRead]):
         )
         result = await self.session.execute(stmt)
         return {date: count for count, date in result.all()}
+
+    async def get_test_stats(self, user_id: UUID) -> dict[TestStatus, int]:
+        stmt = (
+            select(
+                self.model_type.test_status,
+                func.count(self.model_type.test_status),
+            )
+            .where(
+                self.model_type.user_id == user_id,
+                self.model_type.test_status != TestStatus.no_status,
+            )
+            .group_by(self.model_type.test_status)
+        )
+        result = await self.session.execute(stmt)
+        return {status: count for status, count in result.all()}
