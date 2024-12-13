@@ -12,16 +12,20 @@ from app.voice.schemas import VoiceResponse, VoiceCommand
 
 COMMAND_PATTERNS = {
     VoiceCommand.create_task: [
+        "создать задачи",
+        "создать задачу",
+        "создать задача",
+        "создать задач",
         "создай задачи",
         "создай задачу",
         "создай задача",
         "создай задач",
-        "добавь задачи",
-        "добавь задачу",
-        "добавь задача",
-        "добавь задач",
     ],
     VoiceCommand.show_tasks: [
+        "показать задачи",
+        "показать задача",
+        "показать задачу",
+        "показать задач",
         "покажи задачи",
         "покажи задача",
         "покажи задачу",
@@ -45,7 +49,8 @@ class VoiceUseCases(UseCase):
             name=name,
             description=desc,
             user_id=user.id,
-            checklist_id=user_data["checklist_id"],
+            project_id=user_data["project_id"],
+            workspace_id=user_data["workspace_id"],
         )
         await self.uow.tasks.add(task)
         await self.uow.commit()

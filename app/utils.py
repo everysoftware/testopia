@@ -1,34 +1,8 @@
-import re
-
-#
-# def sanitize_markdown(text: str) -> str:
-#     return text
+from chatgpt_md_converter import telegram_format
 
 
 def sanitize_markdown(text: str) -> str:
-    """
-    Экранирует специальные символы для Telegram MarkdownV2.
-    """
-    # Список символов, которые необходимо экранировать
-    special_chars = r"[_*[\]()~`>#+\-=|{}.!]"
-    # Экранируем их обратной косой чертой
-    sanitized_text = re.sub(special_chars, r"\\\g<0>", text)
-
-    # Экранируем символы внутри pre/code блоков
-    sanitized_text = re.sub(
-        r"```(.*?)```",
-        lambda match: f"```{match.group(1).replace('`', '\\`')}```",
-        sanitized_text,
-        flags=re.S,
-    )
-    sanitized_text = re.sub(
-        r"`(.*?)`",
-        lambda match: f"`{match.group(1).replace('`', '\\`')}`",
-        sanitized_text,
-    )
-
-    # Возвращаем безопасный для MarkdownV2 текст
-    return sanitized_text
+    return telegram_format(text)
 
 
 def split_message(msg: str, *, with_photo: bool = False) -> list[str]:

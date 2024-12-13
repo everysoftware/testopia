@@ -224,4 +224,4 @@ async def solve(
     full_text = sanitize_markdown(full_text)
     logging.info("Full_text: %s", full_text)
     for part in split_message(full_text):
-        await call.message.answer(part)
+        await call.message.answer(part, parse_mode="HTML")

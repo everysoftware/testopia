@@ -5,5 +5,5 @@ from app.config import bot_settings
 
 bot = Bot(
     bot_settings.bot_token,
-    default=DefaultBotProperties(parse_mode="MarkdownV2"),
+    default=DefaultBotProperties(parse_mode="Markdown"),
 )
