@@ -2,19 +2,23 @@ import asyncio
 import datetime
 import logging
 import random
-from typing import Sequence
+from typing import Sequence, Any
 
 import numpy as np
 import pandas as pd
+from sqlalchemy import insert
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from app.base.types import UUID
-from app.db.dependencies import UOWDep
-from app.di import inject
+from app.base.types import UUID, naive_utc
+from app.projects.models import Project
+from app.tasks.models import Task
 from app.tasks.schemas import TaskStatus, TestStatus
+from app.users.models import User
+from app.workspaces.models import Workspace
 
 
 def generate_timestamps(number: int) -> Sequence[datetime.datetime]:
-    now = datetime.datetime.now(datetime.UTC)
+    now = naive_utc()
     timestamps = np.random.choice(
         pd.date_range(
             start=now - datetime.timedelta(days=365 - 30), end=now, freq="D"
@@ -48,20 +52,19 @@ def generate_statuses(
     return statuses, test_statuses
 
 
-def get_df(user_id: UUID, checklist_id: int, number: int) -> pd.DataFrame:
+def get_df(number: int, **static: Any) -> pd.DataFrame:
     timestamps = generate_timestamps(number)
     statuses, test_statuses = generate_statuses(
         number, done_p=0.9, test_p=0.8, passed_p=0.6
     )
     df = pd.DataFrame(
         {
-            "checklist_id": checklist_id,
-            "user_id": user_id,
-            "name": "Test task",
+            "name": "Test",
             "created_at": timestamps,
             "updated_at": timestamps,
             "status": statuses,
             "test_status": test_statuses,
+            **static,
         }
     )
     df["created_at"] = pd.to_datetime(df["created_at"])
@@ -69,17 +72,28 @@ def get_df(user_id: UUID, checklist_id: int, number: int) -> pd.DataFrame:
     return df
 
 
-@inject
-async def fill_tasks_table(
-    user_id: UUID, checklist_id: int, number: int, uow: UOWDep
-) -> None:
-    df = get_df(user_id, checklist_id, number)
-    conn = await uow.session.connection()
-    await conn.run_sync(
-        lambda sync_conn: df.to_sql(
-            "tasks", con=sync_conn, if_exists="append", index=False
-        ),
+async def fill_tasks_table(db_url: str, user_id: UUID, number: int) -> None:
+    engine = create_async_engine(
+        db_url,
+        echo=False,
+        pool_pre_ping=True,
     )
+    session_factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with session_factory() as session:
+        async with session.begin():
+            user: User = await session.get_one(User, user_id)  # noqa
+            ws = Workspace(name="Test workspace", user=user)
+            project = Project(name="Test project", user=user, workspace=ws)
+            session.add_all((ws, project))
+            await session.flush()
+            df = get_df(
+                number,
+                user_id=user.id,
+                workspace_id=ws.id,
+                project_id=project.id,
+            )
+            stmt = insert(Task)
+            await session.execute(stmt, df.to_dict(orient="records"))
     logging.info("Filled tasks table with %d tasks", number)
 
 
@@ -93,10 +107,14 @@ def get_valid_integer(prompt: str) -> int:
 
 async def main() -> None:
     logging.basicConfig(level=logging.INFO)
-    user_id = get_valid_integer("Enter user ID: ")
-    checklist_id = get_valid_integer("Enter checklist ID: ")
-    number = get_valid_integer("Enter number of tasks: ")
-    await fill_tasks_table(user_id, checklist_id, number)  # type: ignore[call-arg]
+    db_url = input(
+        "Enter DB url (e.g. postgresql+asyncpg://postgres:changethis@db:5432/app): "
+    )
+    user_id = input(
+        "Enter user ID (e.g. 3a2ec830-c4d5-465a-8a22-09bb302b58fa): "
+    )
+    number = get_valid_integer("Enter number of tasks (e.g. 1000): ")
+    await fill_tasks_table(db_url, user_id, number)  # type: ignore[call-arg]
     print("Done!")
 
 

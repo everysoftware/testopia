@@ -19,15 +19,6 @@ router = Router()
 async def show(
     message: types.Message, user: UserDep, service: StatsServiceDep
 ) -> None:
-    status_stats_path = await service.plot_by_statuses(user.id)
-    try:
-        await message.answer_photo(
-            photo=FSInputFile(status_stats_path),
-            caption="Состояние прохождения тестов",
-        )
-    finally:
-        os.remove(status_stats_path)
-
     now = naive_utc()
     daily_stats_path = await service.plot_by_days(
         user.id, now, now - datetime.timedelta(days=365)
@@ -37,5 +28,14 @@ async def show(
             photo=FSInputFile(daily_stats_path),
             caption="Статистика по задачам",
         )
+
     finally:
         os.remove(daily_stats_path)
+    status_stats_path = await service.plot_by_statuses(user.id)
+    try:
+        await message.answer_photo(
+            photo=FSInputFile(status_stats_path),
+            caption="Состояние прохождения тестов",
+        )
+    finally:
+        os.remove(status_stats_path)
