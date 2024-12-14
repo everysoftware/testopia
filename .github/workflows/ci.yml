@@ -1,4 +1,4 @@
-name: Ruff
+name: Deploy
 
 on:
   push:
@@ -17,13 +17,26 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.12.3
-    - name: Install dependencies
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
     - name: Lint with Ruff
       run: |
-        source venv/bin/activate
         pip install ruff
         ruff check app
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_IP_ADDRESS }} <<EOF
+            mkdir -p home/testopia
+            cd home/testopia
+            git pull
+            make up
+          EOF
