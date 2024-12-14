@@ -47,6 +47,7 @@ class AIAdapter:
         payload = {
             "model": "GigaChat",
             "messages": [{"role": "user", "content": text}],
+            "max_tokens": 4000,
         }
         headers = {
             "Content-Type": "application/json",

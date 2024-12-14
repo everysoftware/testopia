@@ -37,7 +37,13 @@ class TaskUseCases(UseCase):
 
     async def solve(self, task_id: UUID) -> str:
         task = await self.uow.tasks.get_one(task_id)
-        prompt = f"Task: {task.name}. "
+        project = await self.uow.projects.get_one(task.project_id)
+        prompt = f"Project: {project.name}. "
+        if project.description:
+            prompt += f"Description: {project.description}. "
+        if project.stack:
+            prompt += f"Keywords: {project.stack}. "
+        prompt += f"Task: {task.name}. "
         if task.description:
             prompt += f"Description: {task.description}. "
         prompt += "Solve the task"

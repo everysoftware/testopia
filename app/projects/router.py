@@ -70,7 +70,7 @@ async def get(
     cap = (
         f"🗒 Проект {project.name}\n\n"
         f"Описание: {project.description}\n"
-        f"Стек технологий: {project.stack}\n"
+        f"Ключевые слова: {project.stack}\n"
         f"Создан: {project.created_at}\n"
         f"Изменен: {project.updated_at}\n\n"
     )
@@ -94,9 +94,8 @@ async def select_project(
     workspaces: WorkspaceServiceDep,
 ) -> None:
     page = await workspaces.get_many(user, LimitOffset(limit=100))
-    await call.message.answer(
-        "Выберите пространство", kb=get_workspace_kb(page, action_btns=False)
-    )
+    kb = get_workspace_kb(page, action_btns=False)
+    await call.message.answer("Выберите пространство", reply_markup=kb)
     await state.set_state(ProjectGroup.select_project)
     await call.answer()
 
@@ -105,22 +104,47 @@ async def select_project(
     F.data.startswith("select_"), ProjectGroup.select_project
 )
 async def enter_name(call: types.CallbackQuery, state: FSMContext) -> None:
-    project_id = call.data.split("_")[1]
-    await state.update_data(project_id=project_id)
-    await call.message.answer("Назовите список задач. Например, `авторизация`")
+    workspace_id = call.data.split("_")[1]
+    await state.update_data(workspace_id=workspace_id)
+    await call.message.answer("Назовите проект. Например, `VK`")
     await state.set_state(ProjectGroup.enter_name)
     await call.answer()
 
 
 @router.message(ProjectGroup.enter_name)
+async def enter_description(message: types.Message, state: FSMContext) -> None:
+    await state.update_data(project_name=message.text)
+    await message.answer(
+        "Введите описание. Например, `Популярная сеть для мгновенного обмена сообщениями`"
+    )
+    await state.set_state(ProjectGroup.enter_description)
+
+
+@router.message(ProjectGroup.enter_description)
+async def enter_stack(message: types.Message, state: FSMContext) -> None:
+    await state.update_data(project_description=message.text)
+    await message.answer(
+        "Введите ключевые слова. Они будут использованы для анализа задач проекта. "
+        "Например, `Python, FastAPI, PostgreSQL, SQLAlchemy`"
+    )
+    await state.set_state(ProjectGroup.enter_stack)
+
+
+@router.message(ProjectGroup.enter_stack)
 async def add(
     message: types.Message,
     state: FSMContext,
     user: UserDep,
-    service: WorkspaceServiceDep,
+    projects: ProjectServiceDep,
 ) -> None:
-    name = message.text
-    product = message.text
-    await service.create(user_id=user.id, name=name, product=product)
-    await message.answer("Чек-лист успешно создан!")
-    await get_many(message, state, user, service)
+    stack = message.text
+    user_data = await state.get_data()
+    await projects.create(
+        user_id=user.id,
+        workspace_id=user_data["workspace_id"],
+        name=user_data["project_name"],
+        description=user_data["project_description"],
+        stack=stack,
+    )
+    await message.answer("Проект успешно создан!")
+    await get_many(message, state, user, projects)

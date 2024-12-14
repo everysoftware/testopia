@@ -39,7 +39,7 @@ async def get_many(
 @router.callback_query(F.data == "add", WorkspaceGroup.get_many)
 async def request_name(call: types.CallbackQuery, state: FSMContext) -> None:
     await call.message.answer(
-        "Назовите пространство. Например, `VK`", reply_markup=CANCEL_KB
+        "Назовите пространство. Например, `Рабочее`", reply_markup=CANCEL_KB
     )
     await state.set_state(WorkspaceGroup.enter_name)
     await call.answer()

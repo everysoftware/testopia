@@ -17,7 +17,7 @@ from app.tasks.keyboards import (
 from app.tasks.schemas import TaskStatus, TestStatus
 from app.tasks.states import TaskGroup
 from app.users.dependencies import UserDep
-from app.utils import sanitize_markdown, split_message
+from app.utils import md_to_html, split_msg_html
 
 router = Router()
 
@@ -221,7 +221,7 @@ async def solve(
     user_data = await state.get_data()
     task_id = user_data["task_id"]
     full_text = await service.solve(task_id)
-    full_text = sanitize_markdown(full_text)
+    full_text = md_to_html(full_text)
     logging.info("Full_text: %s", full_text)
-    for part in split_message(full_text):
+    for part in split_msg_html(full_text):
         await call.message.answer(part, parse_mode="HTML")
