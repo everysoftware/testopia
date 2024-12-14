@@ -1,3 +1,4 @@
+import itertools
 import logging
 import os
 
@@ -12,24 +13,12 @@ from app.voice.schemas import VoiceResponse, VoiceCommand
 
 COMMAND_PATTERNS = {
     VoiceCommand.create_task: [
-        "создать задачи",
-        "создать задачу",
-        "создать задача",
-        "создать задач",
-        "создай задачи",
-        "создай задачу",
-        "создай задача",
-        "создай задач",
+        ("создать", "создай", "создают", "добавить", "добавь", "добавляют"),
+        ("задачи", "задачу", "задача", "задач"),
     ],
     VoiceCommand.show_tasks: [
-        "показать задачи",
-        "показать задача",
-        "показать задачу",
-        "показать задач",
-        "покажи задачи",
-        "покажи задача",
-        "покажи задачу",
-        "покажи задач",
+        ("показать", "покажи"),
+        ("задачи", "задачу", "задача", "задач"),
     ],
 }
 
@@ -68,7 +57,8 @@ class VoiceUseCases(UseCase):
             pattern = ""
 
             for c, patterns in COMMAND_PATTERNS.items():
-                for p in patterns:
+                for p_raw in itertools.product(*patterns):
+                    p = " ".join(p_raw)
                     if p in text:
                         cmd = c
                         pattern = p
