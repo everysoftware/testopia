@@ -16,9 +16,9 @@ from app.workspaces.keyboards import get_workspace_kb
 router = Router()
 
 
-@router.callback_query(F.data == "to_projects")
+@router.message(F.text == "Мои проекты 📝")
 @router.message(Command("projects"))
-@router.message(F.text == "Мои задачи 📝")
+@router.callback_query(F.data == "to_projects")
 async def get_many(
     event: types.Message | types.CallbackQuery,
     state: FSMContext,
@@ -40,6 +40,8 @@ async def get_many(
 
 
 # GET
+@router.message(F.text == "Мои задачи ✅")
+@router.message(Command("tasks"))
 @router.callback_query(F.data == "to_project")
 @router.callback_query(
     F.data.startswith("show_project:"), ProjectGroup.get_many

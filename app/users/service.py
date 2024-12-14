@@ -1,3 +1,5 @@
+from aiogram.fsm.context import FSMContext
+
 from app.base.use_case import UseCase
 from app.db.dependencies import UOWDep
 from app.projects.models import Project
@@ -24,7 +26,7 @@ class AuthUseCases(UseCase):
             TelegramUserSpecification(telegram_id)
         )
 
-    async def register(self, data: UserCreate) -> User:
+    async def register(self, state: FSMContext, data: UserCreate) -> User:
         if await self.get_by_telegram_id(data.telegram_id):
             raise ValueError()
         user = User.from_dto(data)
@@ -45,4 +47,7 @@ class AuthUseCases(UseCase):
         await self.uow.workspaces.add(workspace)
         await self.uow.projects.add(project)
         await self.uow.commit()
+        await state.update_data(
+            workspace_id=workspace.id, project_id=project.id
+        )
         return user
