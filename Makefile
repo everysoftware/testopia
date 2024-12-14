@@ -31,4 +31,4 @@ lint:
 
 .PHONY: freeze
 freeze:
-	pip freeze > requirements.txt
+	pip freeze > requirements-full.txt

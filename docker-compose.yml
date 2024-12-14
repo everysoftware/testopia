@@ -32,7 +32,7 @@ services:
     build:
       context: .
       dockerfile: docker/bot.Dockerfile
-    command: /bin/bash -c "source venv/bin/activate && alembic upgrade head && python -m app"
+    command: /bin/bash -c "alembic upgrade head && python -m app"
     env_file:
       - .env
     restart: unless-stopped

@@ -4,8 +4,10 @@ import subprocess
 import speech_recognition as sr
 from vosk import Model
 
+from app.voice.config import voice_settings
+
 recognizer = sr.Recognizer()
-recognizer.vosk_model = Model("./models/vosk-rus-small")
+recognizer.vosk_model = Model(voice_settings.recognition_model)
 
 
 def ogg_to_wav(ogg_path: str, wav_path: str | None = None) -> str:
