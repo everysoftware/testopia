@@ -12,15 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.12.3
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.12.3
-    - name: Lint with Ruff
-      run: |
-        pip install ruff
-        ruff check app
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.12.3
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.3
+      - name: Lint with Ruff
+        run: |
+          pip install ruff
+          ruff check app
 
   deploy:
     needs: build
@@ -35,8 +35,7 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_IP_ADDRESS }} <<EOF
-            mkdir -p home/testopia
             cd home/testopia
-            git pull https://github.com/everysoftware/testopia
+            git pull
             make up-prod
           EOF
