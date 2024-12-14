@@ -1,4 +1,5 @@
 import re
+from collections import deque
 from typing import Sequence
 
 from chatgpt_md_converter import telegram_format
@@ -76,11 +77,11 @@ def split_msg_html(text: str, *, with_photo: bool = False) -> Sequence[str]:
 def close_tags(
     html: str, open_tags: Sequence[str] = ()
 ) -> tuple[str, Sequence[str]]:
-    """Close all opening tags. Add missing opening tags"""
+    """Close all opening tags. Add missing opening tags."""
     # Pattern for finding tags considering attributes
     tag_pattern = re.compile(r"<(/?)(\w+)([^>]*)>")
     open_stack: list[str] = []
-    close_queue: list[str] = []
+    close_queue: deque[str] = deque()
     close_open_tags: list[str] = []
 
     for tag in tag_pattern.finditer(html):
@@ -89,27 +90,25 @@ def close_tags(
         tag_atr = tag.group(3)
 
         if not is_closing_tag:
-            # If it's an opening tag, put it in the stack
-            open_stack.insert(0, tag_name)
+            # If it's an opening tag, add it to the stack
+            open_stack.append(tag_name)
             close_open_tags.append(f"<{tag_name}{tag_atr}>")
-
-        elif open_stack and open_stack[0] == tag_name:
-            # If it's a closing tag and the last opening tag in the stack matches the current closing tag, remove it from the stack
-            open_stack.pop(0)
-
+        elif open_stack and open_stack[-1] == tag_name:
+            # If it's a closing tag and matches the last opening tag, remove the last opening tag
+            open_stack.pop()
         else:
             # If the closing tag has no opening tag, add it to the queue
-            close_queue.append(tag_name)
+            close_queue.appendleft(tag_name)
 
     # Close all unclosed tags
-    for tag_name in open_stack:
-        html += "</" + tag_name + ">"
+    for tag_name in reversed(open_stack):
+        html += f"</{tag_name}>"
 
     if open_tags:
         html = "".join(open_tags) + html
     else:
         # Open all unopened tags
         for tag_name in close_queue:
-            html = "<" + tag_name + ">" + html
+            html = f"<{tag_name}>" + html
 
     return html, close_open_tags[-len(open_stack) :]
