@@ -7,11 +7,11 @@
 Мощный инструмент для управления задачами, который предлагает решения на основе ИИ и легко
 управляется голосом.
 
-<img src="/assets/onboarding.jpg" width="300" alt=""/><img src="/assets/checklists.PNG" width="300" alt=""/>
+<img src="/assets/onboarding.jpg" width="300" alt=""/><img src="/assets/projects.jpg" width="300" alt=""/>
 
 <img src="/assets/task.jpg" width="300" alt=""/><img src="/assets/solution.jpg" width="300" alt=""/>
 
-<img src="/assets/stats.PNG" width="300" alt=""/>
+<img src="/assets/stats.jpg" width="300" alt=""/>
 
 ## Руководство пользователя
 

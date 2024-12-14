@@ -81,8 +81,9 @@ async def get(
     else:
         await message.answer(cap + "Нет задач", reply_markup=kb)
 
-    await state.update_data(workspace_id=str(project.workspace_id))
-    await state.update_data(project_id=str(project.id))
+    await state.update_data(
+        workspace_id=str(project.workspace_id), project_id=str(project.id)
+    )
     await state.set_state(TaskGroup.get_many)
     if isinstance(event, types.CallbackQuery):
         await event.answer()
