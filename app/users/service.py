@@ -48,6 +48,6 @@ class AuthUseCases(UseCase):
         await self.uow.projects.add(project)
         await self.uow.commit()
         await state.update_data(
-            workspace_id=workspace.id, project_id=project.id
+            workspace_id=str(workspace.id), project_id=str(project.id)
         )
         return user
